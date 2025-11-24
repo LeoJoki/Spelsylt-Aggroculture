@@ -132,3 +132,13 @@ Det här repot ger en grundläggande struktur för att skapa 2D-spel med JavaScr
 6. Vad händer i main.js och varför behövs requestAnimationFrame?
 7. Hur sparar InputHandler information om nedtryckta tangenter?
 8. Vilken Canvas-metod rensar skärmen mellan varje frame och varför behövs det?
+
+## Nästa steg
+
+För att fortsätta med nästa steg så behöver du byta branch till `player`. Du kan göra det genom att ändra branch längst ned i vänstra hörnet i VSCode, eller genom att köra följande kommando i terminalen:
+
+```bash
+git checkout player
+```
+
+Fortsätt sedan till `player.md` för att lära dig hur du skapar en spelarkaraktär som kan röra sig runt på canvasen!
