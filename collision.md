@@ -63,10 +63,9 @@ Om ni minns så har vi pratat en hel del om vad som ansvarar för vad i den kod 
 Det är `Game`-klassens ansvar att kontrollera kollisioner. Detta följer **Single Responsibility Principle**:
 
 **Varför Game?**
-- ✅ Game har överblick över alla objekt
-- ✅ Spelregler hanteras centralt
-- ✅ Player behöver inte veta om andra objekt
-- ✅ Enklare att testa och underhålla
+- Game har överblick över alla objekt.
+- Spelets regler hanteras centralt.
+- Player behöver inte veta om andra objekt.
 
 **Viktigt:** Vi behöver sparar spelaren separat i `Game`, inte som en del av `gameObjects`-arrayen. Detta gör det enklare att hantera spelaren direkt och undviker onödig iteration över alla objekt när vi bara vill uppdatera eller rita spelaren.
 
