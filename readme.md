@@ -74,4 +74,18 @@ Denna fil innehåller bas-klass för alla spelobjekt. Den definierar grundlägga
 
 Denna fil innehåller en specifik implementation av ett spelobjekt, nämligen en rektangel. Den ärver från `GameObject`-klassen och implementerar egna metoder för att rita sig själv på canvas.
 
+## Uppgift 1
 
+Använd Rectangle-klassen för att skapa något med rektanglar. Det kan vara ett hus, en bil, ett träd eller vad du vill. Använd din fantasi!
+
+## Uppgift 2
+
+Skapa en ny klass som ärver från GameObject, till exempel en cirkel eller en triangel. Implementera dess egna render-metod för att rita den på canvas. Lägg sedan till några instanser av denna nya klass i spelet och se hur de beter sig tillsammans med rektanglarna.
+
+För att rita cirklar på canvas så behöver du använda `arc`-metoden.
+
+```javascript
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+ctx.fill();
+```
