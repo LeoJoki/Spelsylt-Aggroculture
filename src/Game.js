@@ -6,8 +6,7 @@ export default class Game {
         this.width = width
         this.height = height
         
-        this.keys = new Set()
-        this.input = new InputHandler(this)
+        this.InputHandler = new InputHandler(this)
         
         // Skapa alla objekt i spelet
         this.gameObjects = [
@@ -27,10 +26,10 @@ export default class Game {
         this.gameObjects.forEach(obj => obj.update(deltaTime))
 
         // Exempel på input-hantering
-        if (this.keys.has('r')) {
+        if (this.InputHandler.keys.has('r')) {
             this.gameObjects[0].vx += 0.001 * deltaTime
         }
-        if (this.keys.has('b')) {
+        if (this.InputHandler.keys.has('b')) {
             this.gameObjects[1].vy -= 0.001 * deltaTime
         }
     }
