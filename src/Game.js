@@ -1,7 +1,8 @@
 import Player from './Player.js'
 import InputHandler from './InputHandler.js'
-import Rectangle from './Rectangle.js'
 import Platform from './Platform.js'
+import Coin from './Coin.js'
+import UserInterface from './UserInterface.js'
 
 export default class Game {
     constructor(width, height) {
@@ -12,7 +13,12 @@ export default class Game {
         this.gravity = 0.001 // pixels per millisekund^2
         this.friction = 0.00015 // luftmotstånd för att bromsa fallhastighet
 
+        // Game state
+        this.score = 0
+        this.coinsCollected = 0
+
         this.inputHandler = new InputHandler(this)
+        this.ui = new UserInterface(this)
 
         this.player = new Player(this, 50, 50, 50, 50, 'green')
 
@@ -29,6 +35,18 @@ export default class Game {
             new Platform(this, 350, this.height - 320, 140, 20, '#8B4513'),
         ]
 
+        // Skapa mynt i nivån
+        this.coins = [
+            new Coin(this, 200, this.height - 180),
+            new Coin(this, 240, this.height - 180),
+            new Coin(this, 450, this.height - 240),
+            new Coin(this, 150, this.height - 320),
+            new Coin(this, 190, this.height - 320),
+            new Coin(this, 600, this.height - 200),
+            new Coin(this, 380, this.height - 360),
+            new Coin(this, 420, this.height - 360),
+        ]
+
         // Skapa andra objekt i spelet (valfritt)
         this.gameObjects = []
     }
@@ -39,6 +57,9 @@ export default class Game {
         
         // Uppdatera plattformar (även om de är statiska)
         this.platforms.forEach(platform => platform.update(deltaTime))
+        
+        // Uppdatera mynt
+        this.coins.forEach(coin => coin.update(deltaTime))
         
         // Uppdatera spelaren
         this.player.update(deltaTime)
@@ -70,7 +91,20 @@ export default class Game {
             }
         })
 
-        // Förhindra att spelaren går utanför skärmen horisontellt
+        // Kontrollera kollision med mynt
+        this.coins.forEach(coin => {
+            if (this.player.intersects(coin) && !coin.markedForDeletion) {
+                // Plocka upp myntet
+                this.score += coin.value
+                this.coinsCollected++
+                coin.markedForDeletion = true
+            }
+        })
+        
+        // Ta bort alla objekt markerade för borttagning
+        this.coins = this.coins.filter(coin => !coin.markedForDeletion)
+
+        // Förhindra att spelaren går utöver skärmen horisontellt
         if (this.player.x < 0) {
             this.player.x = 0
         }
@@ -83,10 +117,16 @@ export default class Game {
         // Rita alla plattformar
         this.platforms.forEach(platform => platform.draw(ctx))
         
+        // Rita mynt
+        this.coins.forEach(coin => coin.draw(ctx))
+        
         // Rita andra spelobjekt
         this.gameObjects.forEach(obj => obj.draw(ctx))
         
         // Rita spelaren
         this.player.draw(ctx)
+        
+        // Rita UI sist (så det är överst)
+        this.ui.draw(ctx)
     }
 }

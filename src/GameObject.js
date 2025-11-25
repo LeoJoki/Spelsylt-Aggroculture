@@ -6,6 +6,7 @@ export default class GameObject {
         this.y = y
         this.width = width
         this.height = height
+        this.markedForDeletion = false
     }
 
     draw(ctx) {
