@@ -138,7 +138,7 @@ Det här repot ger en grundläggande struktur för att skapa 2D-spel med JavaScr
 För att fortsätta med nästa steg så behöver du byta branch till `player`. Du kan göra det genom att ändra branch längst ned i vänstra hörnet i VSCode, eller genom att köra följande kommando i terminalen:
 
 ```bash
-git checkout player
+git checkout 01-player
 ```
 
-Fortsätt sedan till `player.md` för att lära dig hur du skapar en spelarkaraktär som kan röra sig runt på canvasen!
+Fortsätt sedan till `01-player.md` för att lära dig hur du skapar en spelarkaraktär som kan röra sig runt på canvasen!
