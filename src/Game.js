@@ -19,7 +19,7 @@ export default class Game {
         // Uppdatera spelet utifrån deltaTime
         this.gameObjects.forEach(obj => obj.update(deltaTime))
 
-        // Exempel på input-hantering
+        // Exempel på input-hantering, detta bör hanteras av rektanglarna själva
         if (this.inputHandler.keys.has('r')) {
             this.gameObjects[0].velocityX += 0.001 * deltaTime
         }
