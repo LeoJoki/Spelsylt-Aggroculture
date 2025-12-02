@@ -1,6 +1,6 @@
 # Steg 8: Projektiler
 
-I detta steg implementerar vi ett projektilsystem så spelaren kan skjuta fiender. Detta är en grundläggande mekanism som används i många spelgenrer - från platformers till space shooters.
+I detta steg implementerar vi ett projektilsystem så spelaren kan skjuta fiender. En projektil är ett relativt enkelt `GameObject`, men det behöver hålla reda på vars det är på väg och hur långt det har flugit.
 
 ## Koncept: Projektiler som GameObject
 
@@ -30,7 +30,7 @@ export default class Projectile extends GameObject {
         this.speed = 0.5 // pixels per millisekund
         this.startX = x // Spara startposition
         this.maxDistance = 800 // Max en skärm långt
-        this.color = '#ffff00'
+        this.color = 'orange'
     }
     
     update(deltaTime) {
@@ -52,11 +52,6 @@ export default class Projectile extends GameObject {
         // Rita projektilen som en avlång rektangel
         ctx.fillStyle = this.color
         ctx.fillRect(screenX, screenY, this.width, this.height)
-        
-        // Lägg till en kant för effekt
-        ctx.strokeStyle = '#ffaa00'
-        ctx.lineWidth = 1
-        ctx.strokeRect(screenX, screenY, this.width, this.height)
     }
 }
 ```
@@ -64,20 +59,14 @@ export default class Projectile extends GameObject {
 ### Viktiga delar
 
 **directionX:**
-- `-1` = projektilen flyger åt vänster
-- `1` = projektilen flyger åt höger
-- Används för att beräkna rörelse: `this.x += this.directionX * this.speed * deltaTime`
+Detta används för att beräkna rörelse: `this.x += this.directionX * this.speed * deltaTime`. Vi skickar med den senaste riktningen från spelaren för att bestämma åt vilket håll projektilen ska flyga. Men systemet är inte begränsat till spelare, utan kan användas för andra objekt som kan skjuta.
 
 **startX och maxDistance:**
-- Sparar var projektilen skapades
-- Räknar ut hur långt den flugit: `Math.abs(this.x - this.startX)`
-- När distansen > 800px markeras den för borttagning
-- Detta förhindrar eviga projektiler som äter minne
+När vi skapar en ny projektil utgår vi från var den skapades. Vi räknar sedan ut hur långt den flugit: `Math.abs(this.x - this.startX)`. Anledningen till att vi gör det är att det är viktigt att begränsa hur många projektiler det finns i världen då det kan påverka prestanda negativt.
+Ingen vill väl dessutom att det ska flyga runt projektiler överallt?
 
 **speed:**
-- 0.5 pixels per millisekund
-- Vid 60 FPS (~16ms per frame): 0.5 * 16 = 8 pixels/frame
-- Snabbt nog att kännas responsivt, inte så snabbt att man inte ser den
+Med speed sätter vi hur snabbt projektilen ska flyga. Det är konstant, men vi kan definitivt applicera acceleration eller luftmotstånd/fysik på projektilen om vi vill.
 
 ## Uppdatera Player.js
 
@@ -99,15 +88,12 @@ constructor(game, x, y, width, height, color) {
 ```
 
 **lastDirectionX:**
-- Sparar senaste riktningen spelaren rörde sig
-- Default: 1 (höger)
-- Används för att bestämma projektilens riktning
-- Annars skulle spelaren inte kunna skjuta när hen står still
+I `lastDirectionX` sparar vi senaste riktningen spelaren rörde sig. Det används för att bestämma projektilens riktning. Vi behöver det här så att vi kan skjuta när spelaren står still.
 
 **Cooldown system:**
-- `canShoot`: Boolean - kan spelaren skjuta nu?
-- `shootCooldown`: 300ms mellan skott (förhindrar spam)
-- `shootCooldownTimer`: Räknar ner till 0
+Utan ett sätt att begränsa hur ofta spelaren kan skjuta skulle det bli väldigt många projektiler snabbt, vilket kan påverka prestanda och spelbalans negativt. Därför använder vi en cooldown-timer som gör att spelaren måste vänta en kort stund mellan varje skott.
+
+Detta kan med fördel kombineras med ett "ammo"-system för att ytterligare begränsa skjutandet.
 
 Uppdatera rörelselogiken för att spara riktning:
 
@@ -144,7 +130,7 @@ update(deltaTime) {
 }
 ```
 
-Lägg till `shoot()` metoden:
+Att skjuta sköter vi i en egen separat metod. Det låter oss hålla koden organiserad så att all denna logik inte hamnar i update-metoden.
 
 ```javascript
 shoot() {
@@ -160,10 +146,7 @@ shoot() {
 }
 ```
 
-**Varför från spelarens centrum?**
-- `this.x + this.width / 2` = mitt på spelaren horisontellt
-- `this.y + this.height / 2` = mitt på spelaren vertikalt
-- Ser mer naturligt ut än att skjuta från hörnet
+När vi skjuter en ny projektil så spawnar vi den från spelarens mitt. Det känns mer naturligt än att skjuta från hörnet.
 
 ## Uppdatera Game.js
 
