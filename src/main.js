@@ -6,7 +6,7 @@ const setupGame = (canvas) => {
     canvas.width = 854
     canvas.height = 480
     // ctx är "ritkontexten", används för att rita på canvas
-    const ctx = canvas.getContext('2d')
+    const CTX = canvas.getContext('2d')
 
     // Skapa spelet
     const game = new Game(canvas.width, canvas.height)
@@ -20,11 +20,11 @@ const setupGame = (canvas) => {
         lastTime = timeStamp
         
         // Rensa canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        CTX.clearRect(0, 0, canvas.width, canvas.height)
         
         // Uppdatera och rita
         game.update(deltaTime)
-        game.draw(ctx)
+        game.draw(CTX)
         
         // Kör nästa frame
         gameLoop = requestAnimationFrame(runGame)
