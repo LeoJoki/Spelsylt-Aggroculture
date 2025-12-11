@@ -1,4 +1,8 @@
 import GameObject from './GameObject.js'
+import idleSprite from './assets/Pixel Adventure 1/Main Characters/Ninja Frog/Idle (32x32).png'
+import runSprite from './assets/Pixel Adventure 1/Main Characters/Ninja Frog/Run (32x32).png'
+import jumpSprite from './assets/Pixel Adventure 1/Main Characters/Ninja Frog/Jump (32x32).png'
+import fallSprite from './assets/Pixel Adventure 1/Main Characters/Ninja Frog/Fall (32x32).png'
 
 export default class Player extends GameObject {
     constructor(game, x, y, width, height, color) {
@@ -30,6 +34,14 @@ export default class Player extends GameObject {
         this.shootCooldown = 300 // millisekunder mellan skott
         this.shootCooldownTimer = 0
         this.lastDirectionX = 1 // Kom ihåg senaste riktningen för skjutning
+        
+        // Sprite animation system - ladda sprites med olika hastigheter
+        this.loadSprite('idle', idleSprite, 11, 150)  // Långsammare idle
+        this.loadSprite('run', runSprite, 12, 80)     // Snabbare spring
+        this.loadSprite('jump', jumpSprite, 1)
+        this.loadSprite('fall', fallSprite, 1)
+        
+        this.currentAnimation = 'idle'
     }
 
     update(deltaTime) {
@@ -95,6 +107,20 @@ export default class Player extends GameObject {
         if ((this.game.inputHandler.keys.has('x') || this.game.inputHandler.keys.has('X')) && this.canShoot) {
             this.shoot()
         }
+        
+        // Uppdatera animation state baserat på movement
+        if (!this.isGrounded && this.velocityY < 0) {
+            this.setAnimation('jump')
+        } else if (!this.isGrounded && this.velocityY > 0) {
+            this.setAnimation('fall')
+        } else if (this.velocityX !== 0) {
+            this.setAnimation('run')
+        } else {
+            this.setAnimation('idle')
+        }
+        
+        // Uppdatera animation frame
+        this.updateAnimation(deltaTime)
     }
     
     shoot() {
@@ -156,35 +182,40 @@ export default class Player extends GameObject {
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
         
-        // Rita spelaren som en rektangel
-        ctx.fillStyle = this.color
-        ctx.fillRect(screenX, screenY, this.width, this.height)
-
-        // Rita ögon
-        ctx.fillStyle = 'white'
-        ctx.fillRect(screenX + this.width * 0.2, screenY + this.height * 0.2, this.width * 0.2, this.height * 0.2)
-        ctx.fillRect(screenX + this.width * 0.6, screenY + this.height * 0.2, this.width * 0.2, this.height * 0.2)
+        // Försök rita sprite, annars fallback till rektangel
+        const spriteDrawn = this.drawSprite(ctx, camera, this.lastDirectionX === -1)
         
-        // Rita pupiller
-        ctx.fillStyle = 'black'
-        ctx.fillRect(
-            screenX + this.width * 0.25 + this.directionX * this.width * 0.05, 
-            screenY + this.height * 0.25 + this.directionY * this.width * 0.05, 
-            this.width * 0.1, 
-            this.height * 0.1
-        )
-        ctx.fillRect(
-            screenX + this.width * 0.65 + this.directionX * this.width * 0.05, 
-            screenY + this.height * 0.25 + this.directionY * this.width * 0.05, 
-            this.width * 0.1, 
-            this.height * 0.1
-        )
-        // rita mun som ett streck
-        ctx.strokeStyle = 'black'
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        ctx.moveTo(screenX + this.width * 0.3, screenY + this.height * 0.65)
-        ctx.lineTo(screenX + this.width * 0.7, screenY + this.height * 0.65)
-        ctx.stroke()
+        if (!spriteDrawn) {
+            // Fallback: Rita spelaren som en rektangel
+            ctx.fillStyle = this.color
+            ctx.fillRect(screenX, screenY, this.width, this.height)
+
+            // Rita ögon
+            ctx.fillStyle = 'white'
+            ctx.fillRect(screenX + this.width * 0.2, screenY + this.height * 0.2, this.width * 0.2, this.height * 0.2)
+            ctx.fillRect(screenX + this.width * 0.6, screenY + this.height * 0.2, this.width * 0.2, this.height * 0.2)
+            
+            // Rita pupiller
+            ctx.fillStyle = 'black'
+            ctx.fillRect(
+                screenX + this.width * 0.25 + this.directionX * this.width * 0.05, 
+                screenY + this.height * 0.25 + this.directionY * this.width * 0.05, 
+                this.width * 0.1, 
+                this.height * 0.1
+            )
+            ctx.fillRect(
+                screenX + this.width * 0.65 + this.directionX * this.width * 0.05, 
+                screenY + this.height * 0.25 + this.directionY * this.width * 0.05, 
+                this.width * 0.1, 
+                this.height * 0.1
+            )
+            // rita mun som ett streck
+            ctx.strokeStyle = 'black'
+            ctx.lineWidth = 2
+            ctx.beginPath()
+            ctx.moveTo(screenX + this.width * 0.3, screenY + this.height * 0.65)
+            ctx.lineTo(screenX + this.width * 0.7, screenY + this.height * 0.65)
+            ctx.stroke()
+        }
     }
 }
