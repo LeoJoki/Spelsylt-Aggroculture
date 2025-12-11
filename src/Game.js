@@ -1,37 +1,21 @@
+import GameBase from './GameBase.js'
 import Player from './Player.js'
-import InputHandler from './InputHandler.js'
 import Platform from './Platform.js'
 import Coin from './Coin.js'
 import Enemy from './Enemy.js'
-import UserInterface from './UserInterface.js'
-import Camera from './Camera.js'
 import Projectile from './Projectile.js'
 
-export default class Game {
+export default class Game extends GameBase {
     constructor(width, height) {
-        this.width = width
-        this.height = height
+        super(width, height)
         
-        // World size (större än skärmen)
-        this.worldWidth = width * 3 // 3x bredare
-        this.worldHeight = height
-
-        // Fysik
+        // Plattformsspel-specifik fysik
         this.gravity = 0.001 // pixels per millisekund^2
         this.friction = 0.00015 // luftmotstånd för att bromsa fallhastighet
 
-        // Game state
-        this.gameState = 'PLAYING' // PLAYING, GAME_OVER, WIN
-        this.score = 0
+        // Plattformsspel-specifik state
         this.coinsCollected = 0
         this.totalCoins = 0 // Sätts när vi skapar coins
-
-        this.inputHandler = new InputHandler(this)
-        this.ui = new UserInterface(this)
-        
-        // Camera
-        this.camera = new Camera(0, 0, width, height)
-        this.camera.setWorldBounds(this.worldWidth, this.worldHeight)
         
         // Initiera spelet
         this.init()
@@ -104,10 +88,10 @@ export default class Game {
             new Enemy(this, 1800, this.height - 240, 40, 40, 150),
         ]
         
-        // Projektiler
+        // Projektiler (plattformsspel-specifikt)
         this.projectiles = []
 
-        // Skapa andra objekt i spelet (valfritt)
+        // Plattformsspel-specifika objekt
         this.gameObjects = []
     }
     
@@ -132,16 +116,16 @@ export default class Game {
         // Uppdatera bara om spelet är i PLAYING state
         if (this.gameState !== 'PLAYING') return
         
-        // Uppdatera alla spelobjekt
+        // Uppdatera plattformsspel-specifika objekt
         this.gameObjects.forEach(obj => obj.update(deltaTime))
         
         // Uppdatera plattformar (även om de är statiska)
         this.platforms.forEach(platform => platform.update(deltaTime))
         
-        // Uppdatera mynt
+        // Uppdatera mynt (plattformsspel-specifikt)
         this.coins.forEach(coin => coin.update(deltaTime))
         
-        // Uppdatera fiender
+        // Uppdatera fiender (med plattformsfysik)
         this.enemies.forEach(enemy => enemy.update(deltaTime))
         
         // Uppdatera spelaren
@@ -202,11 +186,11 @@ export default class Game {
                 if (projectile.intersects(enemy) && !enemy.markedForDeletion) {
                     enemy.markedForDeletion = true
                     projectile.markedForDeletion = true
-                    this.score += 50 // Bonuspoäng för att döda fiende
+                    this.score += enemy.points || 50 // Använd enemy.points om det finns, annars 50
                 }
             })
             
-            // Kolla kollision med plattformar/världen
+            // Kolla projektil-kollision med plattformar (plattformsspel-specifikt)
             this.platforms.forEach(platform => {
                 if (projectile.intersects(platform)) {
                     projectile.markedForDeletion = true
@@ -214,7 +198,7 @@ export default class Game {
             })
         })
         
-        // Ta bort alla objekt markerade för borttagning
+        // Ta bort objekt markerade för borttagning
         this.coins = this.coins.filter(coin => !coin.markedForDeletion)
         this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion)
         this.projectiles = this.projectiles.filter(projectile => !projectile.markedForDeletion)
