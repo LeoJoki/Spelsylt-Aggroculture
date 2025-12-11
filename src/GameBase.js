@@ -4,7 +4,8 @@ import Camera from './Camera.js'
 
 /**
  * Abstract base class för alla speltyper
- * Innehåller gemensam funktionalitet som alla spel behöver
+ * Innehåller ENDAST gemensam funktionalitet som alla spel behöver
+ * Subklasser (t.ex. PlatformerGame, SpaceShooterGame) implementerar specifik logik
  */
 export default class GameBase {
     constructor(width, height) {
@@ -13,27 +14,30 @@ export default class GameBase {
             throw new Error('GameBase är en abstract class och kan inte instansieras direkt')
         }
 
+        // Canvas dimensioner
         this.width = width
         this.height = height
         
-        // World size (kan överskridas av subklasser)
-        this.worldWidth = width * 3
+        // World size - kan överskridas av subklasser
+        // Default: samma som canvas (ingen scrolling)
+        this.worldWidth = width
         this.worldHeight = height
 
         // Gemensam game state
         this.gameState = 'PLAYING' // PLAYING, GAME_OVER, WIN
         this.score = 0
 
-        // Gemensamma system
+        // Gemensamma system som alla spel behöver
         this.inputHandler = new InputHandler(this)
         this.ui = new UserInterface(this)
         
-        // Camera
+        // Camera - alla spel kan ha en kamera (även om den inte scrollar)
         this.camera = new Camera(0, 0, width, height)
         this.camera.setWorldBounds(this.worldWidth, this.worldHeight)
 
-        // Gemensamma arrays
+        // Gemensamma object arrays - kan användas av alla speltyper
         this.enemies = []
+        this.projectiles = []
     }
 
     /**

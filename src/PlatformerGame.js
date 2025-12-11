@@ -5,9 +5,18 @@ import Coin from './Coin.js'
 import Enemy from './Enemy.js'
 import Projectile from './Projectile.js'
 
-export default class Game extends GameBase {
+/**
+ * PlatformerGame - En konkret implementation av GameBase för plattformsspel
+ * Innehåller plattformsspel-specifik logik som gravity, platforms, coins
+ */
+export default class PlatformerGame extends GameBase {
     constructor(width, height) {
         super(width, height)
+        
+        // Plattformsspel behöver en större värld för sidoscrolling
+        this.worldWidth = width * 3
+        this.worldHeight = height
+        this.camera.setWorldBounds(this.worldWidth, this.worldHeight)
         
         // Plattformsspel-specifik fysik
         this.gravity = 0.001 // pixels per millisekund^2
@@ -16,6 +25,11 @@ export default class Game extends GameBase {
         // Plattformsspel-specifik state
         this.coinsCollected = 0
         this.totalCoins = 0 // Sätts när vi skapar coins
+        
+        // Plattformsspel-specifika arrays
+        this.platforms = []
+        this.coins = []
+        this.projectiles = []
         
         // Initiera spelet
         this.init()

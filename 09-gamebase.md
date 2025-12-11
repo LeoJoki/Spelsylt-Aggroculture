@@ -15,7 +15,7 @@ I detta steg fokuserar vi på:
 
 För att göra vår kod återanvändbar skapar vi:
 1. **GameBase** - Abstract basklass med gemensam funktionalitet
-2. **Game** - Refaktorerad till att extendera GameBase
+2. **PlatformerGame** - Refaktorerad från Game till att extendera GameBase
 3. **Tydlig separation** - Vad är generellt vs plattformsspel-specifikt
 
 ## Problemet - Spelspecifik kod i Game.js
@@ -30,7 +30,7 @@ Men för att nu refaktorisera spelmotorn så att den är redo för flera speltyp
 - Game state (PLAYING, GAME_OVER, WIN)
 - Score system
 - Fiender och projektiler
-- World bounds
+- World dimensioner (worldWidth, worldHeight) - kan överskridas av subklasser
 
 **Plattformsspel-specifika saker:**
 - Gravity och friction
@@ -56,17 +56,20 @@ En abstract class är en klass som inte kan instansieras direkt. Den fungerar so
 
 ```
 GameBase (abstract)
-├── Properties: width, height, score, gameState, camera, enemies, projectiles
-├── Methods: addProjectile(), getProjectileClass()
+├── Properties: width, height, worldWidth (=width, ingen scrolling), score, gameState
+├── Systems: camera, inputHandler, ui
+├── Arrays: enemies, projectiles
 ├── Abstract: init(), restart(), update(), draw()
 │
-├── Game (plattformsspel)
+├── PlatformerGame (plattformsspel)
 │   ├── Extends GameBase
+│   ├── Overrides: worldWidth = width * 3 (för sidoscrolling)
 │   ├── Adds: gravity, friction, platforms, coins
 │   └── Implements: init(), restart(), update(), draw()
 │
 └── SpaceShooter (framtida)
     ├── Extends GameBase
+    ├── Kan ha egen worldWidth för scrolling
     ├── Adds: asteroids, powerups, scrolling background
     └── Implements: init(), restart(), update(), draw()
 ```
@@ -94,11 +97,13 @@ Här försöker vi samla alla properties som är gemensamma för alla speltyper.
 Om vi skapar en farming-simulator i framtiden så kanske vi inte behöver `enemies` eller `projectiles`.
 
 - `width, height` - Canvas storlek
-- `worldWidth, worldHeight` - Världens storlek (för scrolling)
+- `worldWidth, worldHeight` - Världens storlek (default: samma som canvas, ingen scrolling)
+  - Subklasser kan överskriva för att aktivera scrolling (t.ex. PlatformerGame)
 - `gameState` - State machine
 - `score` - Poängsystem
 - `inputHandler, ui, camera` - Gemensamma system
 - `enemies[]` - De flesta spel har fiender
+- `projectiles[]` - Gemensam array för projektiler
 
 #### Abstract methods
 
@@ -111,45 +116,53 @@ init() {
 }
 ```
 
-### Game.js - Refaktorerad med arv
+### PlatformerGame.js - Refaktorerad med arv
 
-Nu kan vi komma igång med att refaktorisera `Game.js` för att ärva från `GameBase`. Titta på den refaktorerade koden i [src/Game.js](src/Game.js). Vi vill ladda in de plattformsspel-specifika delarna i `Game.js` och låta `GameBase` hantera det generella.
+Nu kan vi komma igång med att refaktorisera `Game.js` till `PlatformerGame.js` för att ärva från `GameBase`. Titta på den refaktorerade koden i [src/PlatformerGame.js](src/PlatformerGame.js). Vi vill ladda in de plattformsspel-specifika delarna i `PlatformerGame.js` och låta `GameBase` hantera det generella.
 
-### Vad händer när vi gör `new Game(800, 600)`?
+### Vad händer när vi gör `new PlatformerGame(800, 600)`?
 
-1. **Game constructor körs**
+1. **PlatformerGame constructor körs**
    ```javascript
    constructor(width, height) {
        super(width, height)  // Anropar GameBase constructor
    ```
 
 2. **GameBase constructor körs**
+   - Sätter `width = 800`, `height = 600`
+   - Sätter `worldWidth = 800`, `worldHeight = 600` (default: ingen scrolling)
    - Skapar `inputHandler`, `ui`, `camera`
    - Sätter `score = 0`, `gameState = 'PLAYING'`
-   - Initialiserar `enemies = []`
+   - Initialiserar `enemies = []`, `projectiles = []`
 
-3. **Tillbaka till Game constructor**
+3. **Tillbaka till PlatformerGame constructor**
+   - Överskriver `worldWidth = width * 3` (aktiverar sidoscrolling)
+   - Uppdaterar camera bounds med ny worldWidth
    - Lägger till `gravity`, `friction` (plattformsspel-specifikt)
    - Lägger till `coinsCollected`, `totalCoins`
+   - Skapar `platforms = []`, `coins = []`, `projectiles = []`
    - Anropar `this.init()`
 
-4. **Game.init() körs**
+4. **PlatformerGame.init() körs**
    - Skapar `player`, `platforms`, `coins`, `enemies`
-   - Skapar `projectiles = []` (plattformsspel-specifikt)
 
-**Resultat:** Ett `Game`-objekt som har både GameBase funktionalitet OCH plattformsspel-funktionalitet!
+**Resultat:** Ett `PlatformerGame`-objekt som har både GameBase funktionalitet OCH plattformsspel-funktionalitet!
 
 ## Varför är detta bättre?
 
 Förhoppningsvis är inte abstraktionen sådär jätteförvirrande och att du kan se fördelarna med att dela upp koden på detta sätt. Fördelarna är om vi tittar på vad Game.js innehöll så kan vi se att Input, UI, Camera, Score, GameState, Enemies och Projectiles är kod som skulle dupliceras i varje spel vi skapar. 
 
 ```
-Game.js (300 rader)
-├── Input, UI, Camera (50 rader)
-├── Score, GameState (20 rader)
-├── Enemies, Projectiles (80 rader)
-├── Platforms, Coins (50 rader)
-└── Game loop (100 rader)
+Tidigare Game.js (300 rader)
+├── Input, UI, Camera (50 rader)        → Nu i GameBase
+├── Score, GameState (20 rader)         → Nu i GameBase
+├── Enemies, Projectiles (80 rader)     → Nu i GameBase
+├── Platforms, Coins (50 rader)         → Kvar i PlatformerGame
+└── Game loop (100 rader)               → Kvar i PlatformerGame
+
+Nu:
+GameBase.js (75 rader) - Återanvändbart!
+PlatformerGame.js (285 rader) - Plattformsspel-specifikt
 ```
 
 ## Design patterns
@@ -172,31 +185,36 @@ Subklasser "fyller i detaljerna" men följer samma struktur.
 **GameBase ansvarar för:**
 - Gemensamma system (input, UI, camera)
 - Definiera interface (abstrakta metoder)
-- Minimala gemensamma properties (score, gameState, enemies)
+- Gemensamma properties (score, gameState, enemies, projectiles)
+- Default world size (worldWidth = width, ingen scrolling)
 
-**Game ansvarar för:**
+**PlatformerGame ansvarar för:**
 - Plattformsspel-specifik logik
-- Skapa och hantera plattformsobjekt
-- Implementera game loop för plattformsfysik
-- Projektil-system (addProjectile, projectiles array)
+- Överskriva worldWidth för sidoscrolling
+- Skapa och hantera plattformsobjekt (platforms, coins)
+- Implementera game loop för plattformsfysik (gravity, friction)
+- Plattformsspel-specifik state (coinsCollected, totalCoins)
 
 **Varför är detta bra?**
-Varje klass har ett tydligt ansvar. Om något med camera är fel - kolla GameBase. Om plattformskollisioner är fel - kolla Game.
+Varje klass har ett tydligt ansvar. Om något med camera är fel - kolla GameBase. Om plattformskollisioner är fel - kolla PlatformerGame.
 
 ### Open/Closed Principle
 
 > "Open for extension, closed for modification"
 
-- **Open:** Vi kan extendera GameBase med nya speltyper (SpaceShooter, TwinStick)
+- **Open:** Vi kan extendera GameBase med nya speltyper (PlatformerGame, SpaceShooter, TwinStick)
 - **Closed:** Vi behöver inte ändra GameBase när vi lägger till nya spel
+  - PlatformerGame lägger till platforms, coins, gravity
+  - SpaceShooter skulle lägga till asteroids, powerups, scrolling
+  - TwinStick skulle lägga till twin-stick controls, waves
 
 Detta är en av SOLID-principerna för objektorienterad design.
 
 ## OOP principer och koncept
 
-I det här steget så har vi använt flera viktiga OOP-principer och koncept. Vi börjar med arv, där `Game` ärver från `GameBase`, vilket gör att vi kan återanvända gemensam funktionalitet utan att duplicera kod.
+I det här steget så har vi använt flera viktiga OOP-principer och koncept. Vi börjar med arv, där `PlatformerGame` ärver från `GameBase`, vilket gör att vi kan återanvända gemensam funktionalitet utan att duplicera kod.
 
 Men vi har också ett tydligt exempel på abstraktion, där `GameBase` fungerar som en abstrakt basklass som definierar ett interface för alla speltyper. Detta gör att vi kan skapa olika spel (som plattformsspel eller space shooter) utan att behöva oroa oss för de specifika detaljerna i varje speltyp.
 
-Samtidigt så har vi också tittat på ett steg i vårt kodande där det var dags att refaktorisera och organisera koden bättre. Genom att skapa `GameBase` så har vi separerat det generella från det specifika, vilket gör koden mer modulär och lättare att underhålla.
+Samtidigt så har vi också tittat på ett steg i vårt kodande där det var dags att refaktorisera och organisera koden bättre. Genom att skapa `GameBase` och byta namn på `Game` till `PlatformerGame` så har vi separerat det generella från det specifika, vilket gör koden mer modulär och lättare att underhålla.
 Detta är också ett exempel på "Separation of Concerns", där varje klass har ett tydligt ansvar och fokus.
