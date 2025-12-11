@@ -1,4 +1,5 @@
 import GameObject from './GameObject.js'
+import dingSound from './assets/sounds/ding-402325.mp3'
 
 export default class Coin extends GameObject {
     constructor(game, x, y, size = 20, value = 10) {
@@ -11,11 +12,22 @@ export default class Coin extends GameObject {
         this.bobOffset = 0
         this.bobSpeed = 0.006 // hur snabbt myntet gungar
         this.bobDistance = 5 // hur långt upp/ner myntet rör sig
+        
+        // Sound
+        this.sound = new Audio(dingSound)
+        this.sound.volume = 0.3 // Sänk volymen lite
     }
 
     update(deltaTime) {
         // Gungar myntet upp och ner
         this.bobOffset += this.bobSpeed * deltaTime
+    }
+    
+    collect() {
+        this.markedForDeletion = true
+        // Spela ljud
+        this.sound.currentTime = 0 // Reset så det kan spelas flera gånger snabbt
+        this.sound.play().catch(e => console.log('Coin sound play failed:', e))
     }
 
     draw(ctx, camera = null) {

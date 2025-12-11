@@ -223,7 +223,7 @@ export default class PlatformerGame extends GameBase {
                 // Plocka upp myntet
                 this.score += coin.value
                 this.coinsCollected++
-                coin.markedForDeletion = true
+                coin.collect() // Myntet hanterar sin egen ljud och markering
             }
         })
         
