@@ -68,8 +68,8 @@ export default class Background {
         // Rita alla synliga tiles
         for (let row = startRow; row <= endRow; row++) {
             for (let col = startCol; col <= endCol; col++) {
-                const x = col * this.tileWidth - this.offsetX
-                const y = this.tileY ? (row * this.tileHeight - this.offsetY) : drawY
+                const x = Math.floor(col * this.tileWidth - this.offsetX)
+                const y = this.tileY ? Math.floor(row * this.tileHeight - this.offsetY) : drawY
                 
                 // Skippa tiles som är utanför vårt vertikala område
                 if (y + this.tileHeight < drawY || y > drawY + drawHeight) continue
