@@ -139,6 +139,19 @@ export default class PlatformerGame extends GameBase {
             }
         }
         
+        // Debug: Byt level med N-tangenten (för testning)
+        if (this.inputHandler.keys.has('n') || this.inputHandler.keys.has('N')) {
+            // Ta bort tangenten så den inte triggas flera gånger
+            this.inputHandler.keys.delete('n')
+            this.inputHandler.keys.delete('N')
+            
+            // Gå till nästa level (loopa runt om nödvändigt)
+            this.currentLevelIndex = (this.currentLevelIndex + 1) % this.levels.length
+            this.loadLevel(this.currentLevelIndex)
+            this.gameState = 'PLAYING'
+            return
+        }
+        
         // Uppdatera bara om spelet är i PLAYING state
         if (this.gameState !== 'PLAYING') return
         
