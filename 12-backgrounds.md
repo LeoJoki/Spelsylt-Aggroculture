@@ -84,6 +84,8 @@ draw(ctx, camera) {
 
 Parallax-offseten beräknas genom att multiplicera kamerans position med `scrollSpeed`. En lägre `scrollSpeed` gör att bakgrunden rör sig långsammare än kameran.
 
+**Viktigt för pixel-perfect rendering:** I `drawTiled()` använder vi `Math.floor()` för att avrunda tile-positioner till hela pixlar. Detta förhindrar sub-pixel rendering som skapar synliga artefakter (glipor) mellan tiles.
+
 #### Tiling med endast synliga tiles
 
 Här har vi en ganska komplex metod för att rita endast de tiles som är synliga på skärmen. Den fungerar så att vi beräknar vilka kolumner och rader som är synliga baserat på kamerans position och storlek. När det är gjort så itererar vi enbart över dessa och ritar dem.
@@ -95,8 +97,11 @@ drawTiled(ctx, camera) {
     
     for (let row = startRow; row <= endRow; row++) {
         for (let col = startCol; col <= endCol; col++) {
-            const x = col * this.tileWidth - this.offsetX
-            const y = this.tileY ? (row * this.tileHeight - this.offsetY) : drawY
+            // Math.floor() förhindrar sub-pixel gaps mellan tiles
+            const x = Math.floor(col * this.tileWidth - this.offsetX)
+            const y = this.tileY 
+                ? Math.floor(row * this.tileHeight - this.offsetY) 
+                : drawY
             ctx.drawImage(this.image, x, y, this.tileWidth, this.tileHeight)
         }
     }
@@ -107,30 +112,35 @@ drawTiled(ctx, camera) {
 
 **tileY-flaggan:** Om `tileY` är false, ritas bara en rad av tiles. Detta är användbart för horisontella bakgrunder som molnlagret i exemplet. Men det kan också vara berg eller träd som bara behöver upprepas horisontellt.
 
-### Skapa bakgrundslager i Game.js
+### Skapa bakgrundslager i Level-klasser
 
-I `Game.js` skapar vi flera bakgrundslager med olika parallax-hastigheter:
+Med vårt Level-system lägger vi nu till bakgrunder per level, inte i själva spelmotorn. Detta gör att varje level kan ha sin egen unika atmosfär. Vi skapar bakgrunder i `createBackgrounds()`-metoden i våra level-klasser:
 
 ```javascript
-this.backgrounds = [
-    // Far background - himmel som rör sig långsamt
-    new Background(this, blueBg, {
-        tiled: true,
-        tileWidth: 64,
-        tileHeight: 64,
-        scrollSpeed: 0.3 // Långsam parallax (långt bort)
-    }),
+// I src/levels/Level1.js
+createBackgrounds() {
+    // Far background - blå himmel som rör sig långsamt
+    this.backgrounds.push(
+        new Background(this.game, blueBg, {
+            tiled: true,
+            tileWidth: 64,
+            tileHeight: 64,
+            scrollSpeed: 0.3 // Långsam parallax (långt bort)
+        })
+    )
     // Mid background - moln närmre marken
-    new Background(this, bigClouds, {
-        tiled: true,
-        tileWidth: 448,
-        tileHeight: 101,
-        tileY: false, // Bara horisontell tiling
-        scrollSpeed: 0.6, // Snabbare än himlen
-        yPosition: this.height - 141, // Precis ovanför marken
-        height: 101
-    })
-]
+    this.backgrounds.push(
+        new Background(this.game, bigClouds, {
+            tiled: true,
+            tileWidth: 448,
+            tileHeight: 101,
+            tileY: false, // Bara horisontell tiling
+            scrollSpeed: 0.6, // Snabbare än himlen
+            yPosition: this.game.height - 141, // Precis ovanför marken
+            height: 101
+        })
+    )
+}
 ```
 
 Lagerordningen är viktig eftersom de ritas i den ordningen. Det första lagret är längst bak. 
@@ -138,6 +148,10 @@ Lagerordningen är viktig eftersom de ritas i den ordningen. Det första lagret 
 1. Far background (himmel) - scrollSpeed: 0.3
 2. Mid background (moln) - scrollSpeed: 0.6
 3. Gameplay (plattformar, spelare) - scrollSpeed: 1.0
+
+**Level-specifika bakgrunder:**
+- `Level1` använder blå himmel (`blueBg`) för en vänlig, tutorial-känsla
+- `Level2` använder rosa himmel (`pinkBg`) för en kvällsstämning som signalerar högre svårighetsgrad
 
 ## BackgroundObject - Individuella animerade objekt
 
@@ -235,28 +249,29 @@ ctx.drawImage(this.image, screenX, screenY,
               this.width * this.scale, this.height * this.scale)
 ```
 
-### Skapa moln i Game.js
+### Skapa moln i Level-klasser
 
-I `Game.js` skapar vi flera moln med olika egenskaper:
+Vi skapar moln i `createBackgroundObjects()`-metoden i våra level-klasser:
 
 ```javascript
-this.backgroundObjects = [
-    new BackgroundObject(this, 200, 100, cloud1, {
-        scrollSpeed: 0.2,      // Långt bort
-        velocity: { x: 0.01, y: 0 }, // Slow drift
-        scale: 1.5             // Större
-    }),
-    new BackgroundObject(this, 600, 80, cloud2, {
-        scrollSpeed: 0.25,     // Lite närmare
-        velocity: { x: 0.015, y: 0 }, // Snabbare drift
-        scale: 1.2
-    }),
-    new BackgroundObject(this, 1000, 120, cloud3, {
-        scrollSpeed: 0.18,     // Långt bort
-        velocity: { x: 0.008, y: 0 }, // Långsammare
-        scale: 1.8             // Mycket större
-    })
-]
+// I src/levels/Level1.js
+createBackgroundObjects() {
+    this.backgroundObjects.push(
+        new BackgroundObject(this.game, 200, 100, cloud1, {
+            scrollSpeed: 0.4,      // Lite parallax
+            velocity: { x: 0.015, y: 0 }, // Slow drift
+            scale: 1.5             // Större
+        })
+    )
+    this.backgroundObjects.push(
+        new BackgroundObject(this.game, 600, 80, cloud2, {
+            scrollSpeed: 0.4,     // Samma djup
+            velocity: { x: 0.018, y: 0 }, // Snabbare drift
+            scale: 1.2
+        })
+    )
+    // ... fler moln
+}
 ```
 
 **Variation är nyckeln:**
@@ -267,7 +282,11 @@ this.backgroundObjects = [
 
 Detta skapar en levande, dynamisk himmel istället för identiska moln.
 
-## Update och draw order i Game.js
+**Level-specifika skillnader:**
+- `Level1` har 5 moln med hastigheter 0.015-0.022 (lugnare)
+- `Level2` har 6 moln med hastigheter 0.02-0.028 (mer intensivt)
+
+## Update och draw order i PlatformerGame.js
 
 Ordningen är viktig för att få rätt visuellt resultat:
 
@@ -275,16 +294,18 @@ Ordningen är viktig för att få rätt visuellt resultat:
 // Update
 update(deltaTime) {
     // ...
-    this.backgrounds.forEach(bg => bg.update(deltaTime))
-    this.backgroundObjects.forEach(obj => obj.update(deltaTime))
+    this.backgroundObjects.forEach((obj) => obj.update(deltaTime))
     // ... sen spelare, fiender, etc
 }
 
 // Draw
 draw(ctx) {
+    ctx.clearRect(0, 0, this.width, this.height)
+    
     // Rita i rätt ordning (bakifrån och framåt)
-    this.backgrounds.forEach(bg => bg.draw(ctx, this.camera))
-    this.backgroundObjects.forEach(obj => obj.draw(ctx, this.camera))
+    this.backgrounds.forEach((bg) => bg.draw(ctx, this.camera))
+    this.backgroundObjects.forEach((obj) => obj.draw(ctx, this.camera))
+    
     // ... sen plattformar, spelare, UI, etc
 }
 ```
@@ -296,6 +317,8 @@ draw(ctx) {
 4. Game objects (spelare, mynt, fiender)
 5. UI (längst fram)
 
+**Integrering med Level-systemet:**
+- Levels definierar bakgrunder och bakgrundsobjekt i `createBackgrounds()` och `createBackgroundObjects()`
 ## Varför är detta bra design?
 
 ### Separation of Concerns
@@ -303,6 +326,11 @@ draw(ctx) {
 ```
 Background:       Stora, upprepade lager (tiling, parallax)
 BackgroundObject: Individuella animerade objekt (movement, wrapping)
+Level:            Definierar vilka bakgrunder som ska användas
+PlatformerGame:   Renderar bakgrunder från aktuell level
+```
+
+Varje klass har ett tydligt ansvar. Om vi vill ändra hur tiling fungerar, ändrar vi `Background`. Om vi vill lägga till nya typer av animerade objekt, utökar vi `BackgroundObject`. Om vi vill skapa en ny visuell stil, skapar vi en ny Level-klass med andra bakgrunder.
 ```
 
 Varje klass har ett tydligt ansvar. Om vi vill ändra hur tiling fungerar, ändrar vi `Background`. Om vi vill lägga till nya typer av animerade objekt, utökar vi `BackgroundObject`.
@@ -339,9 +367,28 @@ new Background(this, imagePath, {
     yPosition: this.height - 141,
     height: 101
 })
+Options-mönstret gör klassen extremt flexibel utan att behöva många olika konstruktor-varianter. Varje layer kan konfigurera exakt vad den behöver.
+
+## Debug-verktyg för utveckling
+
+För att kunna testa levels och bakgrunder snabbt har vi lagt till en debug-funktion:
+
+**Tryck N för att byta level** - I `PlatformerGame.js` finns en kortkommando som låter dig växla mellan levels utan att behöva spela igenom dem:
+
+```javascript
+// I update() metoden
+if (this.inputHandler.keys.has('n') || this.inputHandler.keys.has('N')) {
+    this.inputHandler.keys.delete('n')
+    this.inputHandler.keys.delete('N')
+    this.currentLevelIndex = (this.currentLevelIndex + 1) % this.levels.length
+    this.loadLevel(this.currentLevelIndex)
+    this.gameState = 'PLAYING'
+}
 ```
 
-Options-mönstret gör klassen extremt flexibel utan att behöva många olika konstruktor-varianter. Varje layer kan konfigurera exakt vad den behöver.
+Detta visar en viktig arbetsmetod: **skapa verktyg som gör utveckling snabbare**. Istället för att spela igenom hela Level1 varje gång du vill testa Level2, trycker du bara N. Detta är ett exempel på hur professionella spelutvecklare jobbar - de skapar debug-verktyg och shortcuts för att effektivisera sitt arbete.
+
+## Uppgiftertret gör klassen extremt flexibel utan att behöva många olika konstruktor-varianter. Varje layer kan konfigurera exakt vad den behöver.
 
 ## Uppgifter
 
