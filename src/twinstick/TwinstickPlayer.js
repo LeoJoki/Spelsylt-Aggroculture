@@ -25,6 +25,26 @@ export default class TwinstickPlayer extends GameObject {
         this.shootCooldown = 0
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
         
+        // Ammo system
+        this.maxAmmo = 12 // Skott per magasin
+        this.currentAmmo = this.maxAmmo
+        this.reserveAmmo = 60 // Total reserv-ammo
+        this.isReloading = false
+        this.reloadTimer = 0
+        this.reloadDuration = 1500 // Millisekunder att ladda om
+        
+        // Dash system
+        this.isDashing = false
+        this.dashSpeed = 0.8 // Mycket snabbare än normal rörelse
+        this.dashDuration = 150 // Millisekunder som dashen varar
+        this.dashTimer = 0
+        this.dashCooldown = 0
+        this.dashCooldownDuration = 500 // Millisekunder mellan dashes
+        this.dashDirectionX = 0
+        this.dashDirectionY = 0
+        this.lastMoveDirectionX = 0 // Spara senaste rörelseriktningen
+        this.lastMoveDirectionY = 0
+        
         // Sprite animations - no assets loaded yet, will fallback to rectangle
         // TODO: Load sprite animations here when assets are ready
         // this.loadSprite('idle', idleSprite, frameCount, frameInterval)
@@ -34,31 +54,49 @@ export default class TwinstickPlayer extends GameObject {
     }
 
     update(deltaTime) {
-        if (this.game.inputHandler.keys.has('a')) {
-            this.velocityX = -this.moveSpeed
-            this.directionX = -1
-        } else if (this.game.inputHandler.keys.has('d')) {
-            this.velocityX = this.moveSpeed
-            this.directionX = 1
+        // Hantera dash
+        if (this.isDashing) {
+            this.dashTimer -= deltaTime
+            if (this.dashTimer <= 0) {
+                this.isDashing = false
+            }
+            // Under dash, rör sig i dashens riktning
+            this.x += this.dashDirectionX * this.dashSpeed * deltaTime
+            this.y += this.dashDirectionY * this.dashSpeed * deltaTime
         } else {
-            this.velocityX = 0
-            this.directionX = 0
-        }
+            // Normal rörelse (endast när inte dashar)
+            if (this.game.inputHandler.keys.has('a')) {
+                this.velocityX = -this.moveSpeed
+                this.directionX = -1
+            } else if (this.game.inputHandler.keys.has('d')) {
+                this.velocityX = this.moveSpeed
+                this.directionX = 1
+            } else {
+                this.velocityX = 0
+                this.directionX = 0
+            }
 
-        if (this.game.inputHandler.keys.has('w')) {
-            this.velocityY = -this.moveSpeed
-            this.directionY = -1
-        } else if (this.game.inputHandler.keys.has('s')) {
-            this.velocityY = this.moveSpeed
-            this.directionY = 1
-        } else {
-            this.velocityY = 0
-            this.directionY = 0
-        }
+            if (this.game.inputHandler.keys.has('w')) {
+                this.velocityY = -this.moveSpeed
+                this.directionY = -1
+            } else if (this.game.inputHandler.keys.has('s')) {
+                this.velocityY = this.moveSpeed
+                this.directionY = 1
+            } else {
+                this.velocityY = 0
+                this.directionY = 0
+            }
+            
+            // Spara senaste rörelseriktningen (för dash när man står still)
+            if (this.directionX !== 0 || this.directionY !== 0) {
+                this.lastMoveDirectionX = this.directionX
+                this.lastMoveDirectionY = this.directionY
+            }
 
-        // Uppdatera position baserat på hastighet och deltaTime
-        this.x += this.velocityX * deltaTime
-        this.y += this.velocityY * deltaTime
+            // Uppdatera position baserat på hastighet och deltaTime
+            this.x += this.velocityX * deltaTime
+            this.y += this.velocityY * deltaTime
+        }
 
         // Håll spelaren inom världens gränser
         this.x = Math.max(0, Math.min(this.x, this.game.worldWidth - this.width))
@@ -79,11 +117,84 @@ export default class TwinstickPlayer extends GameObject {
             this.shootCooldown -= deltaTime
         }
         
-        // Skjut när vänster musknapp är nedtryckt
-        if (this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
+        // Hantera dash cooldown
+        if (this.dashCooldown > 0) {
+            this.dashCooldown -= deltaTime
+        }
+        
+        // Hantera reload
+        if (this.isReloading) {
+            this.reloadTimer -= deltaTime
+            if (this.reloadTimer <= 0) {
+                this.finishReload()
+            }
+        }
+        
+        // Aktivera dash med space-tangent
+        if (this.game.inputHandler.keys.has(' ') && !this.isDashing && this.dashCooldown <= 0) {
+            this.startDash()
+        }
+        
+        // Starta reload med 'r'-tangent
+        if (this.game.inputHandler.keys.has('r') && !this.isReloading && this.currentAmmo < this.maxAmmo && this.reserveAmmo > 0) {
+            this.startReload()
+        }
+        
+        // Auto-reload när magasinet är tomt
+        if (this.currentAmmo === 0 && !this.isReloading && this.reserveAmmo > 0) {
+            this.startReload()
+        }
+        
+        // Skjut när vänster musknapp är nedtryckt (inte under dash eller reload)
+        if (!this.isDashing && !this.isReloading && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0 && this.currentAmmo > 0) {
             this.shoot()
             this.shootCooldown = this.shootCooldownDuration
         }
+    }
+    
+    startDash() {
+        // Använd nuvarande rörelseriktning, eller senaste om spelaren står still
+        let dashDirX = this.directionX || this.lastMoveDirectionX
+        let dashDirY = this.directionY || this.lastMoveDirectionY
+        
+        // Om ingen riktning finns, dash framåt (default)
+        if (dashDirX === 0 && dashDirY === 0) {
+            dashDirX = 0
+            dashDirY = 1
+        }
+        
+        // Normalisera riktningen för diagonal dash (annars blir det snabbare diagonalt)
+        const magnitude = Math.sqrt(dashDirX * dashDirX + dashDirY * dashDirY)
+        this.dashDirectionX = dashDirX / magnitude
+        this.dashDirectionY = dashDirY / magnitude
+        
+        // Aktivera dash
+        this.isDashing = true
+        this.dashTimer = this.dashDuration
+        this.dashCooldown = this.dashCooldownDuration
+        
+        // Invulnerabilitet under dash
+        this.invulnerable = true
+        this.invulnerableTimer = this.dashDuration
+    }
+    
+    startReload() {
+        this.isReloading = true
+        this.reloadTimer = this.reloadDuration
+        console.log('Reloading...')
+    }
+    
+    finishReload() {
+        // Beräkna hur många skott som behövs för att fylla magasinet
+        const ammoNeeded = this.maxAmmo - this.currentAmmo
+        const ammoToReload = Math.min(ammoNeeded, this.reserveAmmo)
+        
+        // Fyll på magasinet från reserven
+        this.currentAmmo += ammoToReload
+        this.reserveAmmo -= ammoToReload
+        
+        this.isReloading = false
+        console.log(`Reload complete! Ammo: ${this.currentAmmo}/${this.maxAmmo} (Reserve: ${this.reserveAmmo})`)
     }
     
     shoot() {
@@ -107,6 +218,9 @@ export default class TwinstickPlayer extends GameObject {
         
         // Skapa projektil från spelarens position
         this.game.shootProjectile(centerX, centerY, directionX, directionY)
+        
+        // Minska ammo
+        this.currentAmmo--
     }
 
     draw(ctx, camera) {
