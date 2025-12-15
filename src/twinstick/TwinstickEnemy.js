@@ -105,7 +105,6 @@ export default class TwinstickEnemy extends GameObject {
      * Försöker hitta en alternativ väg runt hindret
      */
     handleWallAvoidance(deltaTime) {
-        const player = this.game.player
         const arenaData = this.game.arena.getData()
         
         // Försök röra sig perpendiculärt till blockerat håll
