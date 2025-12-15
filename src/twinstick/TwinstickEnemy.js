@@ -94,6 +94,63 @@ export default class TwinstickEnemy extends GameObject {
         this.y += this.velocityY * deltaTime
     }
     
+    /**
+     * Hanterar wall avoidance när fienden kolliderar i SEEK-läge
+     * Försöker hitta en alternativ väg runt hindret
+     */
+    handleWallAvoidance(deltaTime) {
+        const player = this.game.player
+        const arenaData = this.game.arena.getData()
+        
+        // Försök röra sig perpendiculärt till blockerat håll
+        // Testa flera riktningar för att hitta en väg runt
+        const testAngles = [
+            Math.PI / 4,   // 45 grader höger
+            -Math.PI / 4,  // 45 grader vänster
+            Math.PI / 2,   // 90 grader höger
+            -Math.PI / 2   // 90 grader vänster
+        ]
+        
+        // Beräkna riktning mot målet
+        const dx = this.lastSeenPosition.x - this.x
+        const dy = this.lastSeenPosition.y - this.y
+        const baseAngle = Math.atan2(dy, dx)
+        
+        // Testa varje alternativ riktning
+        for (const offset of testAngles) {
+            const testAngle = baseAngle + offset
+            const testX = this.x + Math.cos(testAngle) * this.moveSpeed * deltaTime * 50
+            const testY = this.y + Math.sin(testAngle) * this.moveSpeed * deltaTime * 50
+            
+            // Skapa en test-position
+            const testPos = {
+                x: testX,
+                y: testY,
+                width: this.width,
+                height: this.height
+            }
+            
+            // Kolla om denna riktning är fri
+            let isFree = true
+            for (const wall of arenaData.walls) {
+                if (testPos.x < wall.x + wall.width &&
+                    testPos.x + testPos.width > wall.x &&
+                    testPos.y < wall.y + wall.height &&
+                    testPos.y + testPos.height > wall.y) {
+                    isFree = false
+                    break
+                }
+            }
+            
+            // Om riktningen är fri, använd den
+            if (isFree) {
+                this.velocityX = Math.cos(testAngle) * this.moveSpeed
+                this.velocityY = Math.sin(testAngle) * this.moveSpeed
+                break
+            }
+        }
+    }
+    
     shoot() {
         const player = this.game.player
         

@@ -125,9 +125,11 @@ export default class TwinstickGame extends GameBase {
             enemy.update(deltaTime)
             
             // Kolla kollision mellan fiender och väggar
+            let hasCollision = false
             arenaData.walls.forEach(wall => {
                 const collision = enemy.getCollisionData(wall)
                 if (collision) {
+                    hasCollision = true
                     if (collision.direction === 'left' || collision.direction === 'right') {
                         enemy.x = enemyPrevX
                     }
@@ -136,6 +138,11 @@ export default class TwinstickGame extends GameBase {
                     }
                 }
             })
+            
+            // Om fienden kolliderar under SEEK-läge, försök hitta en väg runt
+            if (hasCollision && enemy.state === 'seek') {
+                enemy.handleWallAvoidance(deltaTime)
+            }
         })
         
         // Uppdatera fiendens projektiler
