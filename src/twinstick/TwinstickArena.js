@@ -3,6 +3,7 @@ import Platform from '../Platform.js'
 /**
  * Arena för twinstick shooter
  * Skapar en arena med väggar runt kanterna och några hinder i mitten
+ * Definierar också spawn points och wave konfiguration för fiender
  */
 export default class TwinstickArena {
     constructor(game) {
@@ -17,6 +18,12 @@ export default class TwinstickArena {
         this.playerSpawnX = game.worldWidth / 2
         this.playerSpawnY = game.worldHeight / 2
         
+        // Enemy spawn points (definieras efter att arenan skapats)
+        this.enemySpawnPoints = []
+        
+        // Wave konfiguration
+        this.waveConfig = this.createWaveConfig()
+        
         // Skapa arena
         this.init()
     }
@@ -24,6 +31,64 @@ export default class TwinstickArena {
     init() {
         this.createFloor()
         this.createWalls()
+        this.createSpawnPoints()
+    }
+    
+    /**
+     * Skapar spawn points för fiender
+     * Placerar dem vid hörnen av arenan
+     */
+    createSpawnPoints() {
+        const margin = this.tileSize * 2 // Avstånd från kanten
+        const worldWidth = this.game.worldWidth
+        const worldHeight = this.game.worldHeight
+        
+        this.enemySpawnPoints = [
+            // Övre vänster
+            { x: margin, y: margin },
+            // Övre höger
+            { x: worldWidth - margin, y: margin },
+            // Nedre vänster
+            { x: margin, y: worldHeight - margin },
+            // Nedre höger
+            { x: worldWidth - margin, y: worldHeight - margin }
+        ]
+    }
+    
+    /**
+     * Definierar waves av fiender
+     * Varje wave är en array av enemy-typer som spawnas i ordning
+     */
+    createWaveConfig() {
+        return {
+            spawnPoints: [], // Fylls i av createSpawnPoints()
+            waves: [
+                // Wave 1: Endast små fiender
+                {
+                    enemies: ['small', 'small', 'small', 'small']
+                },
+                // Wave 2: Mix av små och medel
+                {
+                    enemies: ['small', 'medium', 'small', 'medium', 'small']
+                },
+                // Wave 3: Fler medel fiender
+                {
+                    enemies: ['medium', 'medium', 'small', 'medium', 'small', 'small']
+                },
+                // Wave 4: Introducera stor fiende
+                {
+                    enemies: ['large', 'medium', 'small', 'medium', 'small']
+                },
+                // Wave 5: Många fiender
+                {
+                    enemies: ['small', 'small', 'medium', 'medium', 'large', 'small', 'medium']
+                },
+                // Wave 6: Boss wave
+                {
+                    enemies: ['boss', 'medium', 'medium']
+                }
+            ]
+        }
     }
 
     createFloor() {
@@ -122,7 +187,12 @@ export default class TwinstickArena {
         return {
             walls: this.walls,
             playerSpawnX: this.playerSpawnX,
-            playerSpawnY: this.playerSpawnY
+            playerSpawnY: this.playerSpawnY,
+            enemySpawnPoints: this.enemySpawnPoints,
+            waveConfig: {
+                ...this.waveConfig,
+                spawnPoints: this.enemySpawnPoints // Lägg till spawn points i config
+            }
         }
     }
 }

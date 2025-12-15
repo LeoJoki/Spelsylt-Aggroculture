@@ -2,8 +2,8 @@ import GameBase from "../GameBase.js"
 import TwinstickPlayer from "./TwinstickPlayer.js"
 import Projectile from "../Projectile.js"
 import TwinstickArena from "./TwinstickArena.js"
-import TwinstickEnemy from "./TwinstickEnemy.js"
 import AmmoPickup from "./AmmoPickup.js"
+import EnemySpawner from "./EnemySpawner.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -22,6 +22,7 @@ export default class TwinstickGame extends GameBase {
         this.enemyProjectiles = []
         this.ammoPickups = []
         this.arena = null
+        this.spawner = null
 
         this.init()
     }
@@ -47,17 +48,11 @@ export default class TwinstickGame extends GameBase {
         this.camera.targetX = 0
         this.camera.targetY = 0
         
-        // Skapa några fiender
-        this.spawnEnemy(200, 200)
-        this.spawnEnemy(this.worldWidth - 250, 200)
-        this.spawnEnemy(this.worldWidth / 2, this.worldHeight - 200)
+        // Skapa enemy spawner med arena's wave config
+        this.spawner = new EnemySpawner(this, arenaData.waveConfig)
+        this.spawner.start()
     }
     
-    spawnEnemy(x, y) {
-        const enemy = new TwinstickEnemy(this, x, y, 32, 32)
-        this.enemies.push(enemy)
-    }
-
     restart() {
         // Återställ spelet till initial state
     }
@@ -87,22 +82,46 @@ export default class TwinstickGame extends GameBase {
         const playerPrevX = this.player.x
         const playerPrevY = this.player.y
         
+        // Uppdatera spawner
+        if (this.spawner) {
+            this.spawner.update(deltaTime)
+        }
+        
         this.player.update(deltaTime)
         
         // Kolla kollision mellan spelare och väggar
+        // Axis-separated collision - testa varje axel oberoende
         const arenaData = this.arena.getData()
-        arenaData.walls.forEach(wall => {
-            const collision = this.player.getCollisionData(wall)
-            if (collision) {
-                // Återställ position baserat på kollisionsriktning
-                if (collision.direction === 'left' || collision.direction === 'right') {
-                    this.player.x = playerPrevX
-                }
-                if (collision.direction === 'top' || collision.direction === 'bottom') {
-                    this.player.y = playerPrevY
-                }
+        
+        // Spara nya positionen efter update
+        const playerNewX = this.player.x
+        const playerNewY = this.player.y
+        
+        // Testa X-axeln: Använd nya X men gamla Y
+        this.player.y = playerPrevY
+        let hasXCollision = false
+        for (const wall of arenaData.walls) {
+            if (this.player.intersects(wall)) {
+                hasXCollision = true
+                break
             }
-        })
+        }
+        if (hasXCollision) {
+            this.player.x = playerPrevX
+        }
+        
+        // Testa Y-axeln: Använd nuvarande X (antingen ny eller återställd) och nya Y
+        this.player.y = playerNewY
+        let hasYCollision = false
+        for (const wall of arenaData.walls) {
+            if (this.player.intersects(wall)) {
+                hasYCollision = true
+                break
+            }
+        }
+        if (hasYCollision) {
+            this.player.y = playerPrevY
+        }
         
         // Uppdatera alla projektiler
         this.projectiles.forEach(projectile => {
@@ -174,15 +193,29 @@ export default class TwinstickGame extends GameBase {
                     projectile.markedForDeletion = true
 
                     if (dead) {
-                        // Spawna ammo pickups baserat på fiendens health
-                        const ammoCount = enemy.maxHealth // Använd maxHealth för att få rätt antal
+                        // Notifiera spawner om fiende dödas
+                        if (this.spawner) {
+                            this.spawner.onEnemyKilled()
+                        }
+                        
+                        // Spawna ammo pickups baserat på fiendens health med flying effekt
+                        const ammoCount = enemy.maxHealth
+                        const centerX = enemy.x + enemy.width / 2
+                        const centerY = enemy.y + enemy.height / 2
+                        
                         for (let i = 0; i < ammoCount; i++) {
-                            // Sprid ut pickups slumpmässigt runt fienden
                             const angle = Math.random() * Math.PI * 2
-                            const radius = 15 + Math.random() * 20 // 15-35px från centrum
-                            const pickupX = enemy.x + enemy.width / 2 + Math.cos(angle) * radius
-                            const pickupY = enemy.y + enemy.height / 2 + Math.sin(angle) * radius
-                            const pickup = new AmmoPickup(this, pickupX, pickupY)
+                            const speed = 0.2 + Math.random() * 0.15
+                            const targetRadius = 15 + Math.random() * 20
+                            
+                            const pickup = new AmmoPickup(this, centerX, centerY - 20, {
+                                velocityX: Math.cos(angle) * speed,
+                                velocityY: -0.3 + Math.sin(angle) * speed * 0.3,
+                                gravity: 0.0008,
+                                isFlying: true,
+                                rotationSpeed: (Math.random() - 0.5) * 0.008
+                            })
+                            pickup.groundY = centerY + Math.sin(angle) * targetRadius
                             this.ammoPickups.push(pickup)
                         }
                     }
@@ -198,6 +231,31 @@ export default class TwinstickGame extends GameBase {
         
         // Kolla kollision mellan spelare och ammo pickups
         this.ammoPickups.forEach(pickup => {
+            const pickupPrevX = pickup.x
+            const pickupPrevY = pickup.y
+            
+            // Uppdatera pickup physics
+            pickup.update(deltaTime)
+            
+            // Kolla kollision med väggar om pickupen flyger
+            if (pickup.isFlying) {
+                arenaData.walls.forEach(wall => {
+                    const collision = pickup.getCollisionData(wall)
+                    if (collision) {
+                        // Reflektera velocity baserat på kollisionsriktning
+                        if (collision.direction === 'left' || collision.direction === 'right') {
+                            pickup.x = pickupPrevX
+                            pickup.velocityX = -pickup.velocityX * 0.6 // Reflektera och dämpa
+                        }
+                        if (collision.direction === 'top' || collision.direction === 'bottom') {
+                            pickup.y = pickupPrevY
+                            pickup.velocityY = -pickup.velocityY * 0.6 // Reflektera och dämpa
+                        }
+                    }
+                })
+            }
+            
+            // Kolla kollision med spelare (kan plocka upp även när de flyger)
             if (this.player.intersects(pickup)) {
                 this.player.addAmmo(pickup.ammoValue)
                 pickup.markedForDeletion = true
@@ -242,6 +300,11 @@ export default class TwinstickGame extends GameBase {
         this.ammoPickups.forEach(pickup => {
             pickup.draw(ctx, this.camera)
         })
+        
+        // Rita spawner (debug info)
+        if (this.spawner) {
+            this.spawner.draw(ctx, this.camera)
+        }
         
         // Rita UI (health, ammo, score)
         this.ui.draw(ctx)

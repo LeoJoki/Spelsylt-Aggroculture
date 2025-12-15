@@ -1,25 +1,31 @@
 import GameObject from "../GameObject.js"
 
+/**
+ * Abstrakt basklass för alla twinstick fiender
+ * Subklasser måste definiera:
+ * - color
+ * - moveSpeed
+ * - maxHealth
+ * - shootCooldownDuration
+ * - shootRange
+ * - width/height
+ */
 export default class TwinstickEnemy extends GameObject {
-    constructor(game, x, y, width, height) {
+    constructor(game, x, y, width, height, config = {}) {
         super(game, x, y, width, height)
-        this.color = '#FF6B6B' // Röd färg för fiender
         
-        // Rörelse
-        this.moveSpeed = 0.1 // Långsammare än spelaren
+        // Konfigurerbara properties (måste sättas av subklass eller config)
+        this.color = config.color || '#FF6B6B'
+        this.moveSpeed = config.moveSpeed || 0.1
+        this.maxHealth = config.maxHealth || 3
+        this.shootCooldownDuration = config.shootCooldownDuration || 2000
+        this.shootRange = config.shootRange || 300
+        
+        // Gemensamma properties
         this.velocityX = 0
         this.velocityY = 0
-        
-        // Health
-        this.maxHealth = 3
         this.health = this.maxHealth
-        
-        // Shooting
         this.shootCooldown = 0
-        this.shootCooldownDuration = 2000 // Skjuter var 2:e sekund
-        this.shootRange = 300 // Skjuter bara om spelaren är inom detta avstånd
-        
-        // AI state
         this.state = 'idle' // idle, chase, seek, shoot
         this.lastSeenPosition = { x: x, y: y } // Senaste kända position av spelaren
     }
