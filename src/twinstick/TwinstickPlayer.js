@@ -17,9 +17,13 @@ export default class TwinstickPlayer extends GameObject {
         // Health system
         this.maxHealth = 5
         this.health = this.maxHealth
-        this.invulnerable = false // Immun mot skada efter att ha blivit träffad
+        this.invulnerable = false // Immun mot skada efter att har blivit träffad
         this.invulnerableTimer = 0
         this.invulnerableDuration = 1000 // 1 sekund i millisekunder
+        
+        // Shooting system
+        this.shootCooldown = 0
+        this.shootCooldownDuration = 200 // Millisekunder mellan skott
         
         // Sprite animations - no assets loaded yet, will fallback to rectangle
         // TODO: Load sprite animations here when assets are ready
@@ -69,6 +73,40 @@ export default class TwinstickPlayer extends GameObject {
         
         // Uppdatera animation frame
         this.updateAnimation(deltaTime)
+        
+        // Hantera shooting cooldown
+        if (this.shootCooldown > 0) {
+            this.shootCooldown -= deltaTime
+        }
+        
+        // Skjut när vänster musknapp är nedtryckt
+        if (this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
+            this.shoot()
+            this.shootCooldown = this.shootCooldownDuration
+        }
+    }
+    
+    shoot() {
+        // Beräkna riktning från spelarens center till muspekarens position
+        const centerX = this.x + this.width / 2
+        const centerY = this.y + this.height / 2
+        
+        // Använd camera.screenToWorld() för att konvertera koordinater
+        const mouseWorld = this.game.camera.screenToWorld(
+            this.game.inputHandler.mouseX,
+            this.game.inputHandler.mouseY
+        )
+        
+        const dx = mouseWorld.x - centerX
+        const dy = mouseWorld.y - centerY
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        
+        // Normalisera riktningen
+        const directionX = dx / distance
+        const directionY = dy / distance
+        
+        // Skapa projektil från spelarens position
+        this.game.shootProjectile(centerX, centerY, directionX, directionY)
     }
 
     draw(ctx, camera) {

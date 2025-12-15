@@ -1,5 +1,6 @@
 import GameBase from "../GameBase.js"
 import TwinstickPlayer from "./TwinstickPlayer.js"
+import Projectile from "../Projectile.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -14,6 +15,7 @@ export default class TwinstickGame extends GameBase {
         this.player = null
         this.npcs = []
         this.items = []
+        this.projectiles = []
 
         this.init()
     }
@@ -31,10 +33,29 @@ export default class TwinstickGame extends GameBase {
     restart() {
         // Återställ spelet till initial state
     }
+    
+    shootProjectile(x, y, directionX, directionY) {
+        // Skapa en ny projektil med Projectile-klassen
+        const projectile = new Projectile(this, x, y, directionX, directionY)
+        projectile.speed = 0.6 // Twinstick är snabbare än platformer
+        projectile.color = 'yellow'
+        projectile.width = 8
+        projectile.height = 8
+        this.projectiles.push(projectile)
+    }
 
     update(deltaTime) {
         // Uppdatera spel-logik varje frame
         this.player.update(deltaTime)
+        
+        // Uppdatera alla projektiler
+        this.projectiles.forEach(projectile => {
+            projectile.update(deltaTime)
+            // Projektiler tar bort sig själva via maxDistance i Projectile.update()
+        })
+        
+        // Ta bort markerade projektiler
+        this.projectiles = this.projectiles.filter(p => !p.markedForDeletion)
 
         this.camera.follow(this.player)
         this.camera.update(deltaTime)
@@ -48,6 +69,11 @@ export default class TwinstickGame extends GameBase {
         
         // Rita spelvärlden och objekt
         this.player.draw(ctx, this.camera)
+        
+        // Rita alla projektiler
+        this.projectiles.forEach(projectile => {
+            projectile.draw(ctx, this.camera)
+        })
     }
     
     // Rita ett 32x32 grid i världen
