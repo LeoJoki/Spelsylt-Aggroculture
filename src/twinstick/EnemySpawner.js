@@ -203,9 +203,35 @@ export default class EnemySpawner {
      * Rita spawner debug info
      */
     draw(ctx, camera) {
+        // Rita wave info mitt i skärmen (alltid synlig)
+        ctx.save()
+        ctx.fillStyle = 'white'
+        ctx.font = '24px Arial'
+        ctx.textAlign = 'center'
+        ctx.shadowColor = '#000000'
+        ctx.shadowOffsetX = 2
+        ctx.shadowOffsetY = 2
+        ctx.shadowBlur = 4
+        
+        if (this.waveInProgress) {
+            ctx.fillText(
+                `Wave ${this.currentWave + 1} - ${this.enemiesKilled}/${this.enemiesInWave} killed`,
+                this.game.width / 2,
+                40
+            )
+        } else if (this.waveDelayTimer > 0) {
+            ctx.fillText(
+                `Next wave in ${Math.ceil(this.waveDelayTimer / 1000)}s`,
+                this.game.width / 2,
+                40
+            )
+        }
+        
+        ctx.restore()
+        
+        // Rita spawn points bara i debug-läge
         if (!this.game.inputHandler.debugMode) return
         
-        // Rita spawn points
         this.spawnPoints.forEach(point => {
             const screenX = point.x - camera.x
             const screenY = point.y - camera.y
@@ -220,27 +246,5 @@ export default class EnemySpawner {
             ctx.font = '12px Arial'
             ctx.fillText('SPAWN', screenX - 20, screenY - 25)
         })
-        
-        // Rita wave info i top center
-        ctx.save()
-        ctx.fillStyle = 'white'
-        ctx.font = '16px Arial'
-        ctx.textAlign = 'center'
-        
-        if (this.waveInProgress) {
-            ctx.fillText(
-                `Wave ${this.currentWave + 1} - ${this.enemiesKilled}/${this.enemiesInWave} killed`,
-                this.game.width / 2,
-                30
-            )
-        } else if (this.waveDelayTimer > 0) {
-            ctx.fillText(
-                `Next wave in ${Math.ceil(this.waveDelayTimer / 1000)}s`,
-                this.game.width / 2,
-                30
-            )
-        }
-        
-        ctx.restore()
     }
 }
