@@ -5,7 +5,7 @@ export default class Rectangle extends GameObject {
         super(game, x, y, width, height)
         this.color = color
 
-        // Hastighet i x och y riktning
+        // Hastighet (pixels per millisekund)
         this.velocityX = 0
         this.velocityY = 0
         

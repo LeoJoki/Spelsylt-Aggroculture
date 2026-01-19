@@ -1,30 +1,36 @@
 import './style.css'
-import Game from './Game.js'
+import TwinstickGame from './twinstick/TwinstickGame.js'
 
 const setupGame = (canvas) => {
-    // Sätt storlek på canvas 854x480 (16:9)
+    // Sätt storlek på canvas 854x454 (16:9)
     canvas.width = 854
-    canvas.height = 480
+    canvas.height = 454
     // ctx är "ritkontexten", används för att rita på canvas
-    const CTX = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d')
 
-    // Skapa spelet
-    const game = new Game(canvas.width, canvas.height)
+    // Skapa plattformsspelet
+    const game = new TwinstickGame(canvas)
     let lastTime = 0
     // Game loop variabel så att vi kan stoppa den senare om vi vill
     let gameLoop
 
     const runGame = (timeStamp) => {
-        // Räkna ut tid sedan förra frame
+        // Förhindra för stora deltaTime värden (första frame, tab-switch, etc)
+        if (lastTime === 0) {
+            lastTime = timeStamp
+        }
         const deltaTime = timeStamp - lastTime
         lastTime = timeStamp
         
+        // Säkerhets-cap för deltaTime (max 100ms)
+        const cappedDeltaTime = Math.min(deltaTime, 100)
+        
         // Rensa canvas
-        CTX.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
         
         // Uppdatera och rita
-        game.update(deltaTime)
-        game.draw(CTX)
+        game.update(cappedDeltaTime)
+        game.draw(ctx)
         
         // Kör nästa frame
         gameLoop = requestAnimationFrame(runGame)
