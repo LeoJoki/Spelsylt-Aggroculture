@@ -54,6 +54,8 @@ export default class TwinstickArena {
             { x: worldWidth - margin, y: worldHeight - margin }
         ]
     }
+
+
     
     /**
      * Definierar waves av fiender
@@ -62,7 +64,9 @@ export default class TwinstickArena {
     createWaveConfig() {
         return {
             spawnPoints: [], // Fylls i av createSpawnPoints()
-            waves: [
+            waves:
+            [
+
                 // Wave 1: Endast små fiender
                 {
                     enemies: ['small', 'small', 'small', 'small']
@@ -71,22 +75,6 @@ export default class TwinstickArena {
                 {
                     enemies: ['small', 'medium', 'small', 'medium', 'small']
                 },
-                // Wave 3: Fler medel fiender
-                {
-                    enemies: ['medium', 'medium', 'small', 'medium', 'small', 'small']
-                },
-                // Wave 4: Introducera stor fiende
-                {
-                    enemies: ['large', 'medium', 'small', 'medium', 'small']
-                },
-                // Wave 5: Många fiender
-                {
-                    enemies: ['small', 'small', 'medium', 'medium', 'large', 'small', 'medium']
-                },
-                // Wave 6: Boss wave
-                {
-                    enemies: ['boss', 'medium', 'medium']
-                }
             ]
         }
     }
