@@ -30,12 +30,12 @@ export default class TwinstickPlayer extends GameObject {
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
         
         // Ammo system
-        this.maxAmmo = 8 // Skott per magasin
+        /*this.maxAmmo = 8 // Skott per magasin
         this.currentAmmo = this.maxAmmo
         this.reserveAmmo = 60 // Total reserv-ammo
         this.isReloading = false
         this.reloadTimer = 0
-        this.reloadDuration = 1500 // Millisekunder att ladda om
+        this.reloadDuration = 1500 // Millisekunder att ladda om*/
         
         // Dash system
         this.isDashing = false
@@ -126,11 +126,11 @@ export default class TwinstickPlayer extends GameObject {
         this.updateTimer('invulnerableTimer', deltaTime)
         
         // Hantera reload
-        if (this.isReloading) {
+        /*if (this.isReloading) {
             if (this.updateTimer('reloadTimer', deltaTime)) {
                 this.finishReload()
             }
-        }
+        }*/
         
         // Aktivera dash med space-tangent
         if (this.game.inputHandler.keys.has(' ') && !this.isDashing && this.dashCooldown <= 0) {
@@ -138,16 +138,16 @@ export default class TwinstickPlayer extends GameObject {
         }
         
         // Starta reload med 'r'-tangent
-        if (this.game.inputHandler.keys.has('r') && !this.isReloading && this.currentAmmo < this.maxAmmo && this.reserveAmmo > 0) {
+        /*if (this.game.inputHandler.keys.has('r') && !this.isReloading && this.currentAmmo < this.maxAmmo && this.reserveAmmo > 0) {
             this.startReload()
-        }
+        }*/
         
         // Auto-reload när magasinet är tomt
-        if (this.currentAmmo === 0 && !this.isReloading && this.reserveAmmo > 0) {
+       /* if (this.currentAmmo === 0 && !this.isReloading && this.reserveAmmo > 0) {
             this.startReload()
         }
-        
-        if (!this.isDashing && !this.isReloading && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0 && this.currentAmmo > 0) {
+        */
+        if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
             this.shoot()
             this.startTimer('shootCooldown', this.shootCooldownDuration)
         }
@@ -176,7 +176,7 @@ export default class TwinstickPlayer extends GameObject {
         // Note: invulnerability hanteras via isInvulnerable getter (isDashing === true)
     }
     
-    startReload() {
+    /*startReload() {
         this.isReloading = true
         this.startTimer('reloadTimer', this.reloadDuration)
         console.log('Reloading...')
@@ -195,13 +195,12 @@ export default class TwinstickPlayer extends GameObject {
         console.log(`Reload complete! Ammo: ${this.currentAmmo}/${this.maxAmmo} (Reserve: ${this.reserveAmmo})`)
     }
     
-    /**
-     * Lägger till ammo (från ammo box)
-     */
+    
+     //Lägger till ammo (från ammo box)
     addAmmo(amount) {
         this.reserveAmmo += amount
         console.log(`+${amount} ammo! Reserve: ${this.reserveAmmo}`)
-    }
+    }*/
     
     shoot() {
         // Beräkna riktning från spelarens center till muspekarens position
@@ -226,7 +225,6 @@ export default class TwinstickPlayer extends GameObject {
         this.game.addProjectile(centerX, centerY, directionX, directionY)
         
         // Minska ammo
-        this.currentAmmo--
     }
     
     takeDamage(amount) {

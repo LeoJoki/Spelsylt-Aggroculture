@@ -132,8 +132,6 @@ export default class EnemySpawner {
         this.currentWave++
         this.waveDelayTimer = this.waveDelay
         
-        // Spawna 10 ammo pickups som belöning
-        this.spawnWaveReward()
         
         // Callback till game om den finns
         if (this.game.onWaveComplete) {
@@ -144,7 +142,7 @@ export default class EnemySpawner {
     /**
      * Spawnar ammo pickups som belöning efter wave
      */
-    spawnWaveReward() {
+    /*spawnWaveReward() {
         const player = this.game.player
         const ammoCount = 10
         const centerX = player.x + player.width / 2
@@ -173,7 +171,7 @@ export default class EnemySpawner {
         }
         
         console.log('+10 ammo reward!')
-    }
+    }*/
     
     /**
      * Uppdaterar spawner logik
