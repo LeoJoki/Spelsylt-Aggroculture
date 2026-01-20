@@ -13,5 +13,18 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
-  }
+  },
+  "description": "Det här repot är skapat med Vite och innehåller en enkel spelmotor för 2D-spel med JavaScript och HTML5 Canvas. Spelmotorn hanterar grundläggande funktioner som spelobjekt, uppdateringsloop, rendering och input-hantering.",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeoJoki/Spelsylt-Aggroculture.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeoJoki/Spelsylt-Aggroculture/issues"
+  },
+  "homepage": "https://github.com/LeoJoki/Spelsylt-Aggroculture#readme"
 }

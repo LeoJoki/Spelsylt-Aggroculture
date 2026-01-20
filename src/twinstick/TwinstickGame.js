@@ -20,7 +20,6 @@ export default class TwinstickGame extends GameBase {
         this.items = []
         this.projectiles = []
         this.enemyProjectiles = []
-        this.ammoPickups = []
         this.arena = null
         this.spawner = null
 
@@ -37,8 +36,8 @@ export default class TwinstickGame extends GameBase {
             this,
             arenaData.playerSpawnX,
             arenaData.playerSpawnY,
-            32,
-            32,
+            48,
+            48,
             'purple'
         )
         
@@ -199,7 +198,7 @@ export default class TwinstickGame extends GameBase {
                         }
                         
                         // Spawna ammo pickups baserat på fiendens health med flying effekt
-                        const ammoCount = enemy.maxHealth
+                        /*const ammoCount = enemy.maxHealth
                         const centerX = enemy.x + enemy.width / 2
                         const centerY = enemy.y + enemy.height / 2
                         
@@ -217,7 +216,7 @@ export default class TwinstickGame extends GameBase {
                             })
                             pickup.groundY = centerY + Math.sin(angle) * targetRadius
                             this.ammoPickups.push(pickup)
-                        }
+                        }*/
                     }
                 }
             })
@@ -230,7 +229,7 @@ export default class TwinstickGame extends GameBase {
         this.enemies = this.enemies.filter(e => !e.markedForDeletion)
         
         // Kolla kollision mellan spelare och ammo pickups
-        this.ammoPickups.forEach(pickup => {
+       /* this.ammoPickups.forEach(pickup => {
             const pickupPrevX = pickup.x
             const pickupPrevY = pickup.y
             
@@ -263,7 +262,7 @@ export default class TwinstickGame extends GameBase {
         })
         
         // Ta bort uppplockade ammo pickups
-        this.ammoPickups = this.ammoPickups.filter(p => !p.markedForDeletion)
+        this.ammoPickups = this.ammoPickups.filter(p => !p.markedForDeletion)*/
 
         this.camera.follow(this.player)
         this.camera.update(deltaTime)
@@ -297,9 +296,9 @@ export default class TwinstickGame extends GameBase {
         })
         
         // Rita ammo pickups
-        this.ammoPickups.forEach(pickup => {
+        /*this.ammoPickups.forEach(pickup => {
             pickup.draw(ctx, this.camera)
-        })
+        })*/
         
         // Rita spawner (debug info)
         if (this.spawner) {

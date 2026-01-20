@@ -138,7 +138,7 @@ export default class TwinstickArena {
         const blockColor = '#555555'
         
         // Block 1 - övre vänster kvadrant
-        this.walls.push(new Platform(
+        /*this.walls.push(new Platform(
             this.game,
             worldWidth / 3 - blockSize / 2,
             worldHeight / 3 - blockSize / 2,
@@ -155,7 +155,7 @@ export default class TwinstickArena {
             blockSize,
             blockSize,
             blockColor
-        ))
+        ))*/
     }
 
     update(deltaTime) {
