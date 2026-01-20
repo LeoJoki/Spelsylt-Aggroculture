@@ -15,7 +15,7 @@ export default class TwinstickArena {
         this.floor = []
         
         // Spawn position för spelaren (mitt i arenan)
-        this.playerSpawnX = game.worldWidth / 2
+        this.playerSpawnX = game.worldWidth / 2.065
         this.playerSpawnY = game.worldHeight / 2
         
         // Enemy spawn points (definieras efter att arenan skapats)
@@ -134,19 +134,19 @@ export default class TwinstickArena {
         this.walls.push(new Platform(this.game, worldWidth - wallThickness, 0, wallThickness, worldHeight, wallColor))
         
         // Två block i diagonal för visuell feedback när man rör sig
-        const blockSize = this.tileSize * 2 // 128x128
-        const blockColor = '#555555'
+        const blockSize = this.tileSize * 3
+        const blockColor = '#801313'
         
         // Block 1 - övre vänster kvadrant
-        /*this.walls.push(new Platform(
+        this.walls.push(new Platform(
             this.game,
-            worldWidth / 3 - blockSize / 2,
-            worldHeight / 3 - blockSize / 2,
+            worldWidth / 2.25,
+            worldHeight / 4,
             blockSize,
             blockSize,
             blockColor
         ))
-        
+        /*
         // Block 2 - nedre höger kvadrant (diagonal)
         this.walls.push(new Platform(
             this.game,
