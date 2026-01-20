@@ -28,6 +28,7 @@ export default class TwinstickPlayer extends GameObject {
         // Shooting system
         this.shootCooldown = 0
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
+        this.shootCooldownMultiplier = 0
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -149,7 +150,13 @@ export default class TwinstickPlayer extends GameObject {
         */
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
             this.shoot()
-            this.startTimer('shootCooldown', this.shootCooldownDuration)
+            if (this.shootCooldownMultiplier >= 0) {
+                this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
+            }
+            else if (this.shootCooldownMultiplier < 0) {
+                this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
+            }
+            
         }
     }
     

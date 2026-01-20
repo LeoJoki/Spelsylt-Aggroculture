@@ -4,6 +4,8 @@ import Projectile from "../Projectile.js"
 import TwinstickArena from "./TwinstickArena.js"
 import EnemySpawner from "./EnemySpawner.js"
 import PlantSlot from "./PlantSlot.js"
+import TestPlant from "./plants/testplant.js"
+import SeedPicker from "./plants/SeedPicker.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -22,7 +24,10 @@ export default class TwinstickGame extends GameBase {
         this.enemyProjectiles = []
         this.arena = null
         this.spawner = null
+
         this.plantSlots = []
+        this.seedHolding = null
+        this.seedPicker = new SeedPicker(this)
 
         this.init()
     }
@@ -45,7 +50,12 @@ export default class TwinstickGame extends GameBase {
         //Skapar en Array för alla plantslots
         //Ser till att spelet alltid vet om vilka plantSlots som finns som gör att 
         //alla andra gameObjekt klasser också känner till alla plantSlots och deras state
-        this.plantSlots.push(new PlantSlot(this,400,400,64,64))
+
+        let plantSlot = new PlantSlot(this,400,400,64,64)
+        //let plant = new TestPlant(this,64,64)
+        //plantSlot.plantSeed(plant)
+
+        this.plantSlots.push(plantSlot)
         
         // Återställ camera
         this.camera.x = 0
@@ -347,6 +357,16 @@ export default class TwinstickGame extends GameBase {
             ctx.moveTo(0, screenY)
             ctx.lineTo(this.width, screenY)
             ctx.stroke()
+        }
+    }
+
+    onWaveComplete(currentWave) {
+        this.plantSlots.forEach(plantSlot => {
+            plantSlot.onWaveComplete()
+        })
+        if (!this.seedHolding) {
+            this.seedHolding = this.seedPicker.getRandomSeed()
+            console.log(this.seedHolding)
         }
     }
 }
