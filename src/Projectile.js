@@ -1,14 +1,14 @@
 import GameObject from './GameObject.js'
 
 export default class Projectile extends GameObject {
-    constructor(game, x, y, directionX, directionY = 0) {
+    constructor(game, x, y, directionX, directionY = 0, maxDistance = 800) {
         super(game, x, y, 12, 6)
         this.directionX = directionX // -1 för vänster, 1 för höger (eller normaliserad vektor)
         this.directionY = directionY // 0 för horisontell rörelse (eller normaliserad vektor)
         this.speed = 0.5 // pixels per millisekund
         this.startX = x // Spara startposition
         this.startY = y
-        this.maxDistance = 800 // Max en skärm långt
+        this.maxDistance = maxDistance // Max en skärm långt
         this.color = 'orange'
     }
     

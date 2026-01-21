@@ -20,6 +20,7 @@ export default class TwinstickEnemy extends GameObject {
         this.maxHealth = config.maxHealth || 3
         this.shootCooldownDuration = config.shootCooldownDuration || 2000
         this.shootRange = config.shootRange || 300
+        this.maxshootrange = config.maxshootrange
         
         // Gemensamma properties
         this.velocityX = 0
@@ -174,7 +175,7 @@ export default class TwinstickEnemy extends GameObject {
         const directionY = dy / distance
         
         // Skapa fiendens projektil
-        this.game.addEnemyProjectile(centerX, centerY, directionX, directionY)
+        this.game.addEnemyProjectile(centerX, centerY, directionX, directionY, this.maxshootrange)
     }
     
     takeDamage(amount) {

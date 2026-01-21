@@ -16,7 +16,7 @@ export default class EnemySpawner {
         this.spawnPoints = config.spawnPoints || []
         
         // Wave konfiguration
-        this.waves = config.waves || []
+        this.waves = []
         this.currentWave = 0
         this.waveInProgress = false
         this.enemiesInWave = 0
@@ -45,16 +45,33 @@ export default class EnemySpawner {
         this.currentWave = 0
         this.startNextWave()
     }
+
+    //random number generator
+    getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+      }
     
+    //genererar hur många fiender waven ska ha och sedan genererar fiendernas typer
+    waveGeneration() {
+        this.waveEnemies = 4 + (4 * (this.currentWave / 2))
+
+        for (let i = 0; i < this.waveEnemies; i++){
+            this.enemyChoice = this.getRandomInt(6)
+            if (this.enemyChoice >= 0 && this.enemyChoice <= 2) {
+                this.currentWaveEnemies.push('small')
+            } else if (this.enemyChoice >= 3 && this.enemyChoice <= 4) {
+                this.currentWaveEnemies.push('medium')
+            } else {
+                this.currentWaveEnemies.push('large')
+            }
+        }
+        console.log(this.currentWaveEnemies)
+    }
+
     /**
      * Startar nästa wave
      */
     startNextWave() {
-        if (this.currentWave >= this.waves.length) {
-            console.log('Alla waves klara!')
-            return
-        }
-        
         // Starta countdown
         this.countdownActive = true
         this.countdownTimer = this.countdownDuration
@@ -65,12 +82,11 @@ export default class EnemySpawner {
      * Startar wave efter countdown
      */
     beginWave() {
-        const wave = this.waves[this.currentWave]
-        console.log(`Wave ${this.currentWave + 1} börjar! ${wave.enemies.length} fiender`)
+        console.log(`Wave ${this.currentWave + 1} börjar! ${this.currentWaveEnemies.length} fiender`)
         
         this.waveInProgress = true
-        this.currentWaveEnemies = [...wave.enemies] // Kopiera enemy-listan
-        this.enemiesInWave = wave.enemies.length
+        this.waveGeneration()
+        this.enemiesInWave = this.currentWaveEnemies.length
         this.enemiesKilled = 0
         this.spawnTimer = 0
         this.countdownActive = false

@@ -87,9 +87,9 @@ export default class TwinstickGame extends GameBase {
         this.projectiles.push(projectile)
     }
     
-    addEnemyProjectile(x, y, directionX, directionY) {
+    addEnemyProjectile(x, y, directionX, directionY, maxshootrange) {
         // Skapa fiendens projektil
-        const projectile = new Projectile(this, x, y, directionX, directionY)
+        const projectile = new Projectile(this, x, y, directionX, directionY, maxshootrange)
         projectile.speed = 0.3 // Mycket långsammare än spelarens projektiler
         projectile.color = 'red'
         projectile.width = 8
@@ -196,8 +196,8 @@ export default class TwinstickGame extends GameBase {
                     projectile.markedForDeletion = true
                 }
             })
-            
-            if (projectile.intersects(this.player)) {
+
+            if (projectile.intersects(this.player)){
                 if (!this.player.isInvulnerable) {
                     this.player.takeDamage(1)
                 }
