@@ -29,6 +29,8 @@ export default class TwinstickPlayer extends GameObject {
         this.shootCooldown = 0
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
         this.shootCooldownMultiplier = 0
+
+        this.firing = false
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -150,7 +152,7 @@ export default class TwinstickPlayer extends GameObject {
         */
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
             //Planting & unplanting
-            if (this.game.hoveringPlantSlot) {
+            if (this.game.hoveringPlantSlot && !this.firing) {
                 if (this.game.hoveringPlantSlot.state == "unplanted" && this.game.seedHolding) {
                     this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
                     this.game.seedHolding = null
@@ -158,6 +160,7 @@ export default class TwinstickPlayer extends GameObject {
             }
             else {
                 //Shooting
+                this.firing = true
                 this.shoot()
                 if (this.shootCooldownMultiplier >= 0) {
                     this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
@@ -166,6 +169,9 @@ export default class TwinstickPlayer extends GameObject {
                     this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
                 }
             }
+        }
+        else if (!this.game.inputHandler.mouseButtons.has(0)) {
+            this.firing = false
         }
     }
     

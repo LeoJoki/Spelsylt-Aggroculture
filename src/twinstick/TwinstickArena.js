@@ -1,4 +1,7 @@
+import GameObject from '../GameObject.js'
 import Platform from '../Platform.js'
+import Field from "../assets/plants/field.png"
+import Grass from "../assets/plants/grass.png"
 
 /**
  * Arena för twinstick shooter
@@ -23,6 +26,14 @@ export default class TwinstickArena {
         
         // Wave konfiguration
         this.waveConfig = this.createWaveConfig()
+
+        this.fieldScale = 192
+        this.fieldPositionX = (this.game.worldWidth - this.fieldScale) / 2 
+        this.fieldPositionY = (this.game.worldHeight - this.fieldScale) / 2
+
+        this.field = new GameObject(this.game,this.fieldPositionX,this.fieldPositionY,this.fieldScale,this.fieldScale)
+        this.field.loadSprite("idle",Field,1,0,96,96)
+        this.field.setAnimation("idle")
         
         // Skapa arena
         this.init()
@@ -99,15 +110,15 @@ export default class TwinstickArena {
         for (let y = 0; y < tilesY; y++) {
             for (let x = 0; x < tilesX; x++) {
                 // Alternerande färg för checkerboard-mönster
-                const isLight = (x + y) % 2 === 0
-                const color = isLight ? '#2a2a2a' : '#222222'
+                const img = new Image()
+                img.src = Grass
                 
                 this.floor.push({
                     x: x * this.tileSize,
                     y: y * this.tileSize,
                     width: this.tileSize,
                     height: this.tileSize,
-                    color: color
+                    image: img
                 })
             }
         }
@@ -172,10 +183,24 @@ export default class TwinstickArena {
             if (camera && !camera.isVisible(tile)) {
                 return
             }
+
+            ctx.drawImage(
+                tile.image,
+                0,
+                0,
+                tile.width,
+                tile.height,
+                screenX,
+                screenY,
+                tile.width,
+                tile.height
+            )
             
-            ctx.fillStyle = tile.color
-            ctx.fillRect(screenX, screenY, tile.width, tile.height)
+            //ctx.fillStyle = tile.color
+            //ctx.fillRect(screenX, screenY, tile.width, tile.height)
         })
+
+        this.field.drawSprite(ctx,camera)
         
         // Rita väggarna
         this.walls.forEach(wall => {
@@ -189,6 +214,7 @@ export default class TwinstickArena {
             playerSpawnX: this.playerSpawnX,
             playerSpawnY: this.playerSpawnY,
             enemySpawnPoints: this.enemySpawnPoints,
+            field: this.field,
             waveConfig: {
                 ...this.waveConfig,
                 spawnPoints: this.enemySpawnPoints // Lägg till spawn points i config

@@ -27,7 +27,6 @@ export default class PlantSlot extends GameObject {
     
     plantSeed(plant) {
         console.log("PLANTED!")
-        this.removePlant()
 
         this.loadSprite("growing",plant.growingSprite,1,0,32,32)
         this.loadSprite("grown",plant.grownSprite,1,0,32,32)
