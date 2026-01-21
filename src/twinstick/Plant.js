@@ -16,6 +16,8 @@ export default class Plant extends GameObject {
         this.givingBuff = false
 
         this.name = config.name ? config.name : "Nameless Plant"
+        this.rarity = config.rarity ? config.rarity : "Unkown"
+        this.description = config.description ? config.description : "no description"
         this.wavesTillGrown = config.wavesTillGrown ? config.wavesTillGrown : 1
 
         this.growingSprite = config.growingSprite

@@ -264,14 +264,12 @@ export default class TwinstickGame extends GameBase {
                 hovering = true
                 if (plantSlot != this.hoveringPlantSlot) {
                     this.hoveringPlantSlot = plantSlot
-                    console.log("New Plant Hovered!", plantSlot)
                 }
             }
         })
 
         if (!hovering && this.hoveringPlantSlot) {
             this.hoveringPlantSlot = null
-            console.log("not hovering anymore")
         }
         // Kolla kollision mellan spelare och ammo pickups
        /* this.ammoPickups.forEach(pickup => {
@@ -345,10 +343,6 @@ export default class TwinstickGame extends GameBase {
             projectile.draw(ctx, this.camera)
         })
 
-        ctx.font = "25px Verdana"
-        ctx.fillStyle = "white"
-        ctx.fillText("You've got a $",100,100)
-
 
         
         // Rita spawner (debug info)
@@ -397,7 +391,6 @@ export default class TwinstickGame extends GameBase {
         })
         if (!this.seedHolding) {
             this.seedHolding = this.seedPicker.getRandomSeed()
-            console.log(this.seedHolding)
         }
     }
 }

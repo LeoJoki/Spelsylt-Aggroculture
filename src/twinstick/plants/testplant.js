@@ -6,11 +6,13 @@ export default class TestPlant extends Plant {
     constructor(game) {
         let config = {
             name : "Wilting Lilly",
+            rarity: "Common",
             wavesTillGrown : 2,
             width: 32,
             height : 32,
             growingSprite : PlantGrow,
-            grownSprite : WiltingLilly
+            grownSprite : WiltingLilly,
+            description : "Massively increases your firerate, takes 2 waves to grow"
         }
         super(game, config)
     }
