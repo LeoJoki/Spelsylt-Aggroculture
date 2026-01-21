@@ -1,3 +1,6 @@
+import GameObject from "./GameObject"
+
+
 export default class UserInterface {
     constructor(game) {
         this.game = game
@@ -50,6 +53,10 @@ export default class UserInterface {
         ctx.textAlign = 'right'
         ctx.fillText(`Score: ${this.game.score}`, this.game.width - 20, this.game.height - 20)
         ctx.textAlign = 'left'
+
+        if (this.game.seedHolding) {
+            this.drawSeedHolding(ctx)
+        }
 
         ctx.restore()
         
@@ -256,5 +263,33 @@ export default class UserInterface {
         ctx.font = '24px Arial'
         ctx.fillText('Press R to Play Again', this.game.width / 2, this.game.height / 2 + 120)
         ctx.restore()
+    }
+
+    drawSeedHolding(ctx) {
+        ctx.font = "25px Verdana"
+        ctx.fillStyle = "white"
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+
+        ctx.shadowColor = '#000000'
+        ctx.shadowOffsetX = 2
+        ctx.shadowOffsetY = 2
+
+        ctx.fillText(`You got a ${this.game.seedHolding.name}` ,this.game.width/2,this.game.height - 80)
+
+        ctx.font = "20px Verdana"
+        ctx.fillStyle = '#b6b6b6'
+
+        ctx.fillText(`${this.game.seedHolding.rarity}` ,this.game.width/2,this.game.height - 50)
+
+        ctx.font = "18px Verdana"
+
+
+        ctx.fillText(`${this.game.seedHolding.description}` ,this.game.width/2,this.game.height - 20)
+
+        
+
+       
+        
     }
 }

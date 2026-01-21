@@ -11,3 +11,7 @@ canvas#game {
     width: 100%;
     background-color:cornflowerblue;
 }
+
+.test {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}

@@ -2,8 +2,10 @@ import GameBase from "../GameBase.js"
 import TwinstickPlayer from "./TwinstickPlayer.js"
 import Projectile from "../Projectile.js"
 import TwinstickArena from "./TwinstickArena.js"
-import AmmoPickup from "./AmmoPickup.js"
 import EnemySpawner from "./EnemySpawner.js"
+import PlantSlot from "./PlantSlot.js"
+import TestPlant from "./plants/testplant.js"
+import SeedPicker from "./plants/SeedPicker.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -23,6 +25,11 @@ export default class TwinstickGame extends GameBase {
         this.arena = null
         this.spawner = null
 
+        this.plantSlots = []
+        this.seedHolding = null
+        this.seedPicker = new SeedPicker(this)
+        this.hoveringPlantSlot = null
+
         this.init()
     }
 
@@ -40,6 +47,20 @@ export default class TwinstickGame extends GameBase {
             48,
             'purple'
         )
+
+        //Skapar en Array för alla plantslots
+        //Ser till att spelet alltid vet om vilka plantSlots som finns som gör att 
+        //alla andra gameObjekt klasser också känner till alla plantSlots och deras state
+        const fieldX = arenaData.field.x
+        const fieldY = arenaData.field.y
+
+        for (let stepX = 0; stepX < 3; stepX++) {
+            for (let stepY = 0; stepY < 3; stepY++) {
+                let plantSlot = new PlantSlot(this,fieldX + stepX*64,fieldY + stepY*64,64,64)
+                this.plantSlots.push(plantSlot)
+            }
+        }
+
         
         // Återställ camera
         this.camera.x = 0
@@ -228,6 +249,28 @@ export default class TwinstickGame extends GameBase {
         // Ta bort döda fiender
         this.enemies = this.enemies.filter(e => !e.markedForDeletion)
         
+        // Kolla om musen ligger över en plantslot
+        let hovering = false
+
+        this.plantSlots.forEach(plantSlot =>{
+            const other = {
+                x : this.inputHandler.mouseX,
+                y : this.inputHandler.mouseY,
+                width : 0,
+                height : 0
+            }
+
+            if (plantSlot.intersectsMouse(other, this.camera)) {
+                hovering = true
+                if (plantSlot != this.hoveringPlantSlot) {
+                    this.hoveringPlantSlot = plantSlot
+                }
+            }
+        })
+
+        if (!hovering && this.hoveringPlantSlot) {
+            this.hoveringPlantSlot = null
+        }
         // Kolla kollision mellan spelare och ammo pickups
        /* this.ammoPickups.forEach(pickup => {
             const pickupPrevX = pickup.x
@@ -276,6 +319,11 @@ export default class TwinstickGame extends GameBase {
         
         // Rita arena (golv och väggar)
         this.arena.draw(ctx, this.camera)
+
+        //ritar alla plantor
+        this.plantSlots.forEach(plantSlot => {
+            plantSlot.draw(ctx, this.camera)
+        })
         
         // Rita spelvärlden och objekt
         this.player.draw(ctx, this.camera)
@@ -294,11 +342,8 @@ export default class TwinstickGame extends GameBase {
         this.enemyProjectiles.forEach(projectile => {
             projectile.draw(ctx, this.camera)
         })
-        
-        // Rita ammo pickups
-        /*this.ammoPickups.forEach(pickup => {
-            pickup.draw(ctx, this.camera)
-        })*/
+
+
         
         // Rita spawner (debug info)
         if (this.spawner) {
@@ -337,6 +382,15 @@ export default class TwinstickGame extends GameBase {
             ctx.moveTo(0, screenY)
             ctx.lineTo(this.width, screenY)
             ctx.stroke()
+        }
+    }
+
+    onWaveComplete(currentWave) {
+        this.plantSlots.forEach(plantSlot => {
+            plantSlot.onWaveComplete()
+        })
+        if (!this.seedHolding) {
+            this.seedHolding = this.seedPicker.getRandomSeed()
         }
     }
 }

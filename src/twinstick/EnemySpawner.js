@@ -147,8 +147,8 @@ export default class EnemySpawner {
         this.waveInProgress = false
         this.currentWave++
         this.waveDelayTimer = this.waveDelay
-        
-        
+
+
         // Callback till game om den finns
         if (this.game.onWaveComplete) {
             this.game.onWaveComplete(this.currentWave)

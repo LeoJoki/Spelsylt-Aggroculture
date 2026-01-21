@@ -29,8 +29,14 @@ export default class InputHandler {
         
         window.addEventListener('mousemove', (event) => {
             const rect = canvas.getBoundingClientRect()
-            this.mouseX = event.clientX - rect.left
-            this.mouseY = event.clientY - rect.top
+            //Mults är för att kolla relationen mellan target Rect och den egentliga Rect
+            //Multiplicerar med högre tal vid mindre rect så att musens position inom spelet förblir densamma
+            //oavsett skärmstorlek
+            const multX = 1208/rect.width
+            const multY = 680/rect.height
+            
+            this.mouseX = (event.clientX - rect.left) * multX
+            this.mouseY = (event.clientY - rect.top) * multY
         })
         
         canvas.addEventListener('mousedown', (event) => {

@@ -28,6 +28,9 @@ export default class TwinstickPlayer extends GameObject {
         // Shooting system
         this.shootCooldown = 0
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
+        this.shootCooldownMultiplier = 0
+
+        this.firing = false
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -148,8 +151,27 @@ export default class TwinstickPlayer extends GameObject {
         }
         */
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
-            this.shoot()
-            this.startTimer('shootCooldown', this.shootCooldownDuration)
+            //Planting & unplanting
+            if (this.game.hoveringPlantSlot && !this.firing) {
+                if (this.game.hoveringPlantSlot.state == "unplanted" && this.game.seedHolding) {
+                    this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
+                    this.game.seedHolding = null
+                }
+            }
+            else {
+                //Shooting
+                this.firing = true
+                this.shoot()
+                if (this.shootCooldownMultiplier >= 0) {
+                    this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
+                }
+                else if (this.shootCooldownMultiplier < 0) {
+                    this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
+                }
+            }
+        }
+        else if (!this.game.inputHandler.mouseButtons.has(0)) {
+            this.firing = false
         }
     }
     
@@ -234,7 +256,7 @@ export default class TwinstickPlayer extends GameObject {
         if (this.health < 0) this.health = 0
         
         this.startTimer('invulnerableTimer', this.invulnerableDuration)
-        console.log(`Player took ${amount} damage! Health: ${this.health}/${this.maxHealth}`)
+        //console.log(`Player took ${amount} damage! Health: ${this.health}/${this.maxHealth}`)
     }
 
     draw(ctx, camera) {
