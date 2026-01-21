@@ -1,4 +1,7 @@
 import GameObject from "../GameObject.js"
+import Spot from "../assets/plants/spot.png"
+
+
 
 //Detta är ett objekt för den ruta där man kan plantera ett frö så att det kan bli till en växt
 
@@ -10,10 +13,26 @@ export default class PlantSlot extends GameObject {
         this.state = "unplanted"
         this.wavesTillGrown = 0
         this.plant = null
+
+        //--- FORMAT FÖR ATT HÄMTA BILDER FRÅN "plants" inom "assets"
+        //"../assets/plants/IMAGEFILENAME"
+
+        this.loadSprite("unplanted",Spot,1,0,32,32)
+        this.setAnimation("unplanted")
+    }
+    draw(ctx, camera) {
+        this.drawSprite(ctx, camera)
     }
 
+    
     plantSeed(plant) {
+        console.log("PLANTED!")
         this.removePlant()
+
+        this.loadSprite("growing",plant.growingSprite,1,0,32,32)
+        this.loadSprite("grown",plant.grownSprite,1,0,32,32)
+
+        this.setAnimation("growing")
 
         this.plant = plant
         this.state = "growing"
@@ -22,20 +41,11 @@ export default class PlantSlot extends GameObject {
         plant.x = this.x
         plant.y = this.y
     }
-
-    onWaveComplete() {
-        if (this.state == "growing" && this.plant) {
-            console.log("HAS GROWN!")
-            this.wavesTillGrown -= 1
-            if (this.wavesTillGrown <= 0) {
-                this.state = "grown"
-                this.plant.applyBuff()
-            }
-        }
-    }
-
     removePlant() {
         if (this.plant) {
+
+            this.setAnimation("unplanted")
+
             this.plant = null
             this.wavesTillGrown = 0
             this.state = "unplanted"
@@ -43,11 +53,18 @@ export default class PlantSlot extends GameObject {
         }
     }
 
-    draw(ctx, camera) {
-        const screenX = camera ? this.x - camera.x : this.x
-        const screenY = camera ? this.y - camera.y : this.y
+    onWaveComplete() {
+        if (this.state == "growing" && this.plant) {
+            console.log("HAS GROWN!")
+            this.wavesTillGrown -= 1
+            if (this.wavesTillGrown <= 0) {
+                this.setAnimation("grown")
 
-        ctx.fillStyle = "green"
-        ctx.fillRect(screenX, screenY, this.width, this.height)
+                this.state = "grown"
+                this.plant.applyBuff()
+            }
+        }
     }
+
+
 }

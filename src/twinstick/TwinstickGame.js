@@ -28,6 +28,7 @@ export default class TwinstickGame extends GameBase {
         this.plantSlots = []
         this.seedHolding = null
         this.seedPicker = new SeedPicker(this)
+        this.hoveringPlantSlot = null
 
         this.init()
     }
@@ -244,6 +245,30 @@ export default class TwinstickGame extends GameBase {
         // Ta bort döda fiender
         this.enemies = this.enemies.filter(e => !e.markedForDeletion)
         
+        // Kolla om musen ligger över en plantslot
+        this.plantSlots.forEach(plantSlot =>{
+            const other = {
+                x : this.inputHandler.mouseX,
+                y : this.inputHandler.mouseY,
+                width : 0,
+                height : 0
+            }
+
+            let hovering = false
+
+            if (plantSlot.intersectsMouse(other, this.camera)) {
+                hovering = true
+                if (plantSlot != this.hoveringPlantSlot) {
+                    this.hoveringPlantSlot = plantSlot
+                    console.log("New Plant Hovered!")
+                }
+            }
+
+            if (!hovering && this.hoveringPlantSlot) {
+                this.hoveringPlantSlot = null
+                console.log("not hovering anymore")
+            }
+        })
         // Kolla kollision mellan spelare och ammo pickups
        /* this.ammoPickups.forEach(pickup => {
             const pickupPrevX = pickup.x

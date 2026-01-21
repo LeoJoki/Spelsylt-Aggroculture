@@ -1,12 +1,16 @@
-import Plant from "../Plant";
+import Plant from "../Plant"
+import PlantGrow from "../../assets/plants/plantGrow.png"
+import WiltingLilly from "../../assets/plants/wiltingLilly.png"
 
 export default class TestPlant extends Plant {
     constructor(game) {
         let config = {
-            name : "UltraPlant",
+            name : "Wilting Lilly",
             wavesTillGrown : 2,
             width: 32,
-            height : 32
+            height : 32,
+            growingSprite : PlantGrow,
+            grownSprite : WiltingLilly
         }
         super(game, config)
     }

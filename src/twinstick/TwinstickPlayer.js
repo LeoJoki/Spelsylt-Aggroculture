@@ -149,14 +149,23 @@ export default class TwinstickPlayer extends GameObject {
         }
         */
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
-            this.shoot()
-            if (this.shootCooldownMultiplier >= 0) {
-                this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
+            //Planting & unplanting
+            if (this.game.hoveringPlantSlot) {
+                if (this.game.hoveringPlantSlot.state == "unplanted" && this.game.seedHolding) {
+                    this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
+                    this.game.seedHolding = null
+                }
             }
-            else if (this.shootCooldownMultiplier < 0) {
-                this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
+            else {
+                //Shooting
+                this.shoot()
+                if (this.shootCooldownMultiplier >= 0) {
+                    this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
+                }
+                else if (this.shootCooldownMultiplier < 0) {
+                    this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
+                }
             }
-            
         }
     }
     
@@ -241,7 +250,7 @@ export default class TwinstickPlayer extends GameObject {
         if (this.health < 0) this.health = 0
         
         this.startTimer('invulnerableTimer', this.invulnerableDuration)
-        console.log(`Player took ${amount} damage! Health: ${this.health}/${this.maxHealth}`)
+        //console.log(`Player took ${amount} damage! Health: ${this.health}/${this.maxHealth}`)
     }
 
     draw(ctx, camera) {

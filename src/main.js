@@ -5,8 +5,10 @@ const setupGame = (canvas) => {
     // Sätt storlek på canvas 854x454 (16:9)
     canvas.width = 1200
     canvas.height = 675
+
     // ctx är "ritkontexten", används för att rita på canvas
-    const ctx = canvas.getContext('2d')
+    let ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false
 
     // Skapa plattformsspelet
     const game = new TwinstickGame(canvas)

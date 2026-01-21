@@ -46,6 +46,16 @@ export default class GameObject {
                this.y + this.height > other.y
     }
 
+    intersectsMouse(other, camera) {
+        const screenX = camera ? this.x - camera.x : this.x
+        const screenY = camera ? this.y - camera.y : this.y
+
+        return screenX < other.x + other.width &&
+               screenX + this.width > other.x &&
+               screenY < other.y + other.height &&
+               screenY + this.height > other.y
+    }
+
     // Returnerar kollisionsdata med riktning
     getCollisionData(other) {
         if (!this.intersects(other)) return null
