@@ -11,12 +11,12 @@ export default class SmallEnemy extends TwinstickEnemy {
         super(game, x, y, 32, 32, {
             color: '#FF6B6B',      // Röd
             moveSpeed: 0.25,       // Snabbare än normalt
-            maxHealth: 2,          // Låg hälsa
-            shootCooldownDuration: 2500,
+            maxHealth: 3,          // Låg hälsa
+            shootCooldownDuration: 1000,
             shootRange: 45,        // Kort räckvidd
             maxshootrange: 60
         })
-        
+        //fienden som slår
         this.enemyType = 'small'
     }
 }
