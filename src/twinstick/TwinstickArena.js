@@ -64,18 +64,6 @@ export default class TwinstickArena {
     createWaveConfig() {
         return {
             spawnPoints: [], // Fylls i av createSpawnPoints()
-            waves:
-            [
-
-                // Wave 1: Endast små fiender
-                {
-                    enemies: ['small', 'small', 'small', 'small']
-                },
-                // Wave 2: Mix av små och medel
-                {
-                    enemies: ['small', 'medium', 'small', 'medium', 'small']
-                },
-            ]
         }
     }
 
