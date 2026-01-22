@@ -24,7 +24,7 @@ export default class EnemySpawner {
         
         // Spawn timing
         this.spawnTimer = 0
-        this.spawnDelay = 2000 // 2 sekunder mellan spawns
+        this.spawnDelay = 750 // 0.75 sekunder mellan spawns
         this.waveDelay = 5000  // 5 sekunder mellan waves
         this.waveDelayTimer = 0
         
