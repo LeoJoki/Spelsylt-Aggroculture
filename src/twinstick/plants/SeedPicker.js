@@ -1,11 +1,14 @@
-import TestPlant from "./testplant";
+import SunFlower from "./SunFlower.js";
+import Tomatoes from "./Tomatoes.js";
+import WiltingLilly from "./WiltingLilly.js";
+import Chillies from "./Chillies.js";
 
 
 
 export default class SeedPicker {
     constructor(game){
         this.game = game
-        this.weightTable = {common: 10, rare: 3}
+        this.weightTable = {common: 10, rare: 5}
         this.maxWeight = 0
 
         for (const rarity in this.weightTable) {
@@ -13,22 +16,18 @@ export default class SeedPicker {
         }
 
         this.seeds = {
-            common : ["TestPlant"],
-            rare : ["TestPlant"]
+            common : ["SunFlower", "Tomatoes"],
+            rare : ["WiltingLilly", "Chillies"]
         }
     }
 
     pickRarity() {
         let weightValue = Math.random() * this.maxWeight
 
-        console.log(weightValue)
-
         if (weightValue <= this.weightTable.common) {
-            console.log("common")
             return "common"
         }
         else if (weightValue <= this.weightTable.common + this.weightTable.rare) {
-            console.log("rare")
             return "rare"
         }
     }
@@ -41,9 +40,19 @@ export default class SeedPicker {
 
         console.log(lootTable,randomNumb,seedName)
 
-        if (seedName == "TestPlant") {
-            return new TestPlant(this.game)
+        if (seedName == "SunFlower") {
+            return new SunFlower(this.game)
         }
+        else if (seedName == "Tomatoes") {
+            return new Tomatoes(this.game)
+        }
+        else if (seedName == "WiltingLilly") {
+            return new WiltingLilly(this.game)
+        }
+        else if (seedName == "Chillies") {
+            return new Chillies(this.game)
+        }
+
     }
 
 

@@ -46,7 +46,7 @@ export default class GameObject {
                this.y + this.height > other.y
     }
 
-    intersectsMouse(other, camera) {
+    intersectsMouse(other, camera = null) {
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
 
@@ -239,7 +239,7 @@ export default class GameObject {
         const anim = this.animations[this.currentAnimation]
         const frameWidth = anim.frameWidth
         const frameHeight = anim.frameHeight
-        
+
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
         

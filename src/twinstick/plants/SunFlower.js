@@ -1,34 +1,32 @@
 import Plant from "../Plant"
 import PlantGrow from "../../assets/plants/plantGrow.png"
-import WiltingLilly from "../../assets/plants/wiltingLilly.png"
+import GrowSprite from "../../assets/plants/sunFlower.png"
 
-export default class TestPlant extends Plant {
+export default class SunFlower extends Plant {
     constructor(game) {
         let config = {
-            name : "Wilting Lilly",
+            name : "Sunflower",
             rarity: "Common",
-            wavesTillGrown : 2,
+            wavesTillGrown : 1,
             width: 32,
             height : 32,
             growingSprite : PlantGrow,
-            grownSprite : WiltingLilly,
-            description : "Massively increases your firerate, takes 2 waves to grow"
+            grownSprite : GrowSprite,
+            description : "Makes you move faster, takes 1 wave to grow"
         }
         super(game, config)
     }
 
     applyBuff() {
         if (!this.givingBuff) {
-            console.log("FULLY GROWN, BUFF APPLIED!")
-            this.player.shootCooldownMultiplier += 3
+            this.player.speedMultiplier += 0.25
             this.givingBuff = true
-            console.log(this.player)
         }
     }
 
     removeBuff() {
         if (this.givingBuff) {
-            this.player.shootCoolDownMultiplier -= 3
+            this.player.speedMultiplier -= 0.25
             this.givingBuff = false
         }
     }

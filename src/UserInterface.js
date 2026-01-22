@@ -1,4 +1,6 @@
+import DiscardButton from "./DiscardButton"
 import GameObject from "./GameObject"
+import UiButton from "./UiButton"
 
 
 export default class UserInterface {
@@ -8,6 +10,11 @@ export default class UserInterface {
         this.fontFamily = 'Arial'
         this.textColor = '#FFFFFF'
         this.shadowColor = '#000000'
+
+        this.uiButtons = []
+
+        this.discardButton = new DiscardButton(game,game.width - 400, game.height - 100, 64, 64, "red")
+        this.uiButtons.push(this.discardButton)
     }
 
     draw(ctx) {
@@ -49,6 +56,10 @@ export default class UserInterface {
             ctx.fillText(`Coins: ${this.game.coinsCollected}`, 20, 80)
         }
 
+        if (this.uiButtons) {
+            this.drawUiButtons(ctx)
+        }
+
         // Bottom-right: Score
         ctx.textAlign = 'right'
         ctx.fillText(`Score: ${this.game.score}`, this.game.width - 20, this.game.height - 20)
@@ -64,6 +75,12 @@ export default class UserInterface {
         if (this.game.player && this.game.player.isReloading) {
             this.drawReloadIndicator(ctx)
         }
+    }
+
+    drawUiButtons(ctx) {
+        this.uiButtons.forEach(button => {
+            button.draw(ctx)
+        })
     }
 
     drawHealthHearts(ctx, x, y) {
@@ -274,6 +291,8 @@ export default class UserInterface {
         ctx.shadowColor = '#000000'
         ctx.shadowOffsetX = 2
         ctx.shadowOffsetY = 2
+
+        this.discardButton.visible = true
 
         ctx.fillText(`You got a ${this.game.seedHolding.name}` ,this.game.width/2,this.game.height - 80)
 
