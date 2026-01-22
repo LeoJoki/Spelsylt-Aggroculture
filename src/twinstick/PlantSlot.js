@@ -32,6 +32,7 @@ export default class PlantSlot extends GameObject {
         this.loadSprite("grown",plant.grownSprite,1,0,32,32)
 
         this.setAnimation("growing")
+        this.updateAnimation(0.001)
 
         this.plant = plant
         this.state = "growing"
@@ -45,10 +46,10 @@ export default class PlantSlot extends GameObject {
 
             this.setAnimation("unplanted")
 
+            this.plant.removeBuff()
             this.plant = null
             this.wavesTillGrown = 0
             this.state = "unplanted"
-            this.plant.removeBuff()
         }
     }
 

@@ -4,8 +4,8 @@ import Projectile from "../Projectile.js"
 import TwinstickArena from "./TwinstickArena.js"
 import EnemySpawner from "./EnemySpawner.js"
 import PlantSlot from "./PlantSlot.js"
-import TestPlant from "./plants/testplant.js"
 import SeedPicker from "./plants/SeedPicker.js"
+import UiButton from "../UiButton.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -25,6 +25,7 @@ export default class TwinstickGame extends GameBase {
         this.arena = null
         this.spawner = null
 
+        this.uiButtonHovering = null
         this.plantSlots = []
         this.seedHolding = null
         this.seedPicker = new SeedPicker(this)
@@ -60,7 +61,6 @@ export default class TwinstickGame extends GameBase {
                 this.plantSlots.push(plantSlot)
             }
         }
-
         
         // Återställ camera
         this.camera.x = 0
@@ -209,7 +209,7 @@ export default class TwinstickGame extends GameBase {
         this.projectiles.forEach(projectile => {
             this.enemies.forEach(enemy => {
                 if (projectile.intersects(enemy)) {
-                    let dead = enemy.takeDamage(1)
+                    let dead = enemy.takeDamage(this.player.damage)
                     projectile.markedForDeletion = true
 
                     if (dead) {
@@ -250,9 +250,11 @@ export default class TwinstickGame extends GameBase {
         this.enemies = this.enemies.filter(e => !e.markedForDeletion)
         
         // Kolla om musen ligger över en plantslot
-        let hovering = false
+        let hoveringUI = false
+        let hoveringPlant = false
 
-        this.plantSlots.forEach(plantSlot =>{
+        //Kolla om musen ligger över en ui knapp
+        this.ui.uiButtons.forEach(button => {
             const other = {
                 x : this.inputHandler.mouseX,
                 y : this.inputHandler.mouseY,
@@ -260,15 +262,36 @@ export default class TwinstickGame extends GameBase {
                 height : 0
             }
 
-            if (plantSlot.intersectsMouse(other, this.camera)) {
-                hovering = true
-                if (plantSlot != this.hoveringPlantSlot) {
-                    this.hoveringPlantSlot = plantSlot
+            if (button.intersectsMouse(other) && button.visible) {
+                hoveringUI = true
+                if (button != this.uiButtonHovering) {
+                    this.uiButtonHovering = button
                 }
             }
         })
+        if (!hoveringUI) {
+            this.plantSlots.forEach(plantSlot =>{
+                const other = {
+                    x : this.inputHandler.mouseX,
+                    y : this.inputHandler.mouseY,
+                    width : 0,
+                    height : 0
+                }
 
-        if (!hovering && this.hoveringPlantSlot) {
+                if (plantSlot.intersectsMouse(other, this.camera)) {
+                    hoveringPlant = true
+                    if (plantSlot != this.hoveringPlantSlot) {
+                        this.hoveringPlantSlot = plantSlot
+                    }
+                }
+            })
+        }
+
+        if (!hoveringUI && this.uiButtonHovering) {
+            this.uiButtonHovering = null
+        }
+
+        if (!hoveringPlant && this.hoveringPlantSlot) {
             this.hoveringPlantSlot = null
         }
         // Kolla kollision mellan spelare och ammo pickups
