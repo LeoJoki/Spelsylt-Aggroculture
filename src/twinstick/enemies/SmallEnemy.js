@@ -37,7 +37,7 @@ export default class SmallEnemy extends TwinstickEnemy {
         this.setAnimation("shoot")
         this.loadSprite("idle",Biter,1,0,32,32)
         this.setAnimation("idle")*/
-        //fienden som slår
+        //fienden som slårdsaduiadbauo
         this.enemyType = 'small'
     }
     draw(ctx, camera) {
