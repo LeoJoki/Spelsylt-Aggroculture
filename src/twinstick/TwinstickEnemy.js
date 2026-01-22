@@ -15,6 +15,7 @@ export default class TwinstickEnemy extends GameObject {
         super(game, x, y, width, height)
         
         // Konfigurerbara properties (måste sättas av subklass eller config)
+
         this.color = config.color || '#FF6B6B'
         this.moveSpeed = config.moveSpeed || 0.1
         this.maxHealth = config.maxHealth || 3
@@ -188,84 +189,6 @@ export default class TwinstickEnemy extends GameObject {
         }
     }
     
-    draw(ctx, camera) {
-        const screenX = camera ? this.x - camera.x : this.x
-        const screenY = camera ? this.y - camera.y : this.y
-        
-        // Rita fienden som en rektangel
-        ctx.fillStyle = this.color
-        ctx.fillRect(screenX, screenY, this.width, this.height)
-        
-        // Rita kant
-        ctx.strokeStyle = '#8B0000' // Mörkröd
-        ctx.lineWidth = 2
-        ctx.strokeRect(screenX, screenY, this.width, this.height)
-        
-        // Rita health bar ovanför fienden
-        // this.drawHealthBar(ctx, screenX, screenY)
-        
-        // Rita debug-information om debug-läge är på
-        if (this.game.inputHandler.debugMode) {
-            this.drawDebug(ctx, camera)
-            
-            const player = this.game.player
-            const arenaData = this.game.arena.getData()
-            const hasLOS = this.hasLineOfSight(player, arenaData.walls)
-            
-            // Rita line of sight linje
-            const centerX = this.x + this.width / 2
-            const centerY = this.y + this.height / 2
-            const playerCenterX = player.x + player.width / 2
-            const playerCenterY = player.height / 2
-            
-            const screenX1 = camera ? centerX - camera.x : centerX
-            const screenY1 = camera ? centerY - camera.y : centerY
-            const screenX2 = camera ? playerCenterX - camera.x : playerCenterX
-            const screenY2 = camera ? playerCenterY - camera.y : playerCenterY
-            
-            // Grön = har LOS, Röd = ingen LOS
-            ctx.strokeStyle = hasLOS ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
-            ctx.lineWidth = 2
-            ctx.beginPath()
-            ctx.moveTo(screenX1, screenY1)
-            ctx.lineTo(screenX2, screenY2)
-            ctx.stroke()
-            
-            // Rita skjutavstånd
-            ctx.strokeStyle = 'rgba(255, 255, 0, 0.2)'
-            ctx.beginPath()
-            ctx.arc(screenX1, screenY1, this.shootRange, 0, Math.PI * 2)
-            ctx.stroke()
-            
-            // Rita state text
-            ctx.fillStyle = 'white'
-            ctx.font = '12px Arial'
-            ctx.fillText(this.state.toUpperCase(), screenX1, screenY1 - 20)
-            
-            // Rita senaste kända position om i SEEK-läge
-            if (this.state === 'seek') {
-                const lastSeenScreenX = camera ? this.lastSeenPosition.x - camera.x : this.lastSeenPosition.x
-                const lastSeenScreenY = camera ? this.lastSeenPosition.y - camera.y : this.lastSeenPosition.y
-                
-                ctx.fillStyle = 'rgba(255, 255, 0, 0.5)'
-                ctx.beginPath()
-                ctx.arc(lastSeenScreenX, lastSeenScreenY, 10, 0, Math.PI * 2)
-                ctx.fill()
-            }
-        }
-    }
-    
-    drawHealthBar(ctx, screenX, screenY) {
-        const barWidth = this.width
-        const barHeight = 4
-        const healthPercent = this.health / this.maxHealth
-        
-        // Bakgrund
-        ctx.fillStyle = '#333'
-        ctx.fillRect(screenX, screenY - 8, barWidth, barHeight)
-        
-        // Health
-        ctx.fillStyle = healthPercent > 0.5 ? '#4CAF50' : '#F44336'
-        ctx.fillRect(screenX, screenY - 8, barWidth * healthPercent, barHeight)
-    }
 }
+    
+

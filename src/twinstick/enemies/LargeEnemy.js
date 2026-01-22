@@ -1,4 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
+import Biter from "../../assets/enemies/biter.png"
+
 
 /**
  * Stor långsam fiende
@@ -16,6 +18,9 @@ export default class LargeEnemy extends TwinstickEnemy {
             shootRange: 45,        // Kort räckvidd
             maxshootrange: 60      // Lång räckvidd
         })
+        this.state = "idle"
+        this.loadSprite("idle",Biter,1,0,32,32)
+        this.setAnimation("idle")
         //fienden som slår fast stor
         this.enemyType = 'large'
     }
