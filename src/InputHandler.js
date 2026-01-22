@@ -11,7 +11,6 @@ export default class InputHandler {
         
         // Tangentbord
         window.addEventListener('keydown', (event) => {
-            console.log(event.key)
             this.keys.add(event.key)
             
             // Toggla debug-läge med 'p'
@@ -20,6 +19,7 @@ export default class InputHandler {
                 console.log('Debug mode:', this.debugMode)
             }
         })
+
         window.addEventListener('keyup', (event) => {
             this.keys.delete(event.key)
         })
@@ -41,7 +41,6 @@ export default class InputHandler {
         
         canvas.addEventListener('mousedown', (event) => {
             this.mouseButtons.add(event.button)
-            console.log('Mouse button pressed:', event.button)
         })
         
         window.addEventListener('mouseup', (event) => {

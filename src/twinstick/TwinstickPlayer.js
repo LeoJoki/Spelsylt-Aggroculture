@@ -14,6 +14,8 @@ export default class TwinstickPlayer extends GameObject {
         this.directionX = 0
         this.directionY = 0
 
+        this.speedMultiplier = 0
+
         // ===== DESIGN: Flag-based state system =====
         // isDashing, isReloading = mutually exclusive actions
         // invulnerable = status effect (via isInvulnerable getter)
@@ -30,7 +32,10 @@ export default class TwinstickPlayer extends GameObject {
         this.shootCooldownDuration = 200 // Millisekunder mellan skott
         this.shootCooldownMultiplier = 0
 
+        this.damage = 1
+
         this.firing = false
+        this.unplanted = false
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -75,12 +80,21 @@ export default class TwinstickPlayer extends GameObject {
             this.x += this.dashDirectionX * this.dashSpeed * deltaTime
             this.y += this.dashDirectionY * this.dashSpeed * deltaTime
         } else {
+            let applyMult = 0
+
+            if (this.speedMultiplier >= 0) {
+                applyMult = 1 + this.speedMultiplier
+            }
+            else if (this.speedMultiplier < 0) {
+                applyMult = 1 / (1 - this.speedMultiplier)
+            }
+
             // Normal rörelse (endast när inte dashar)
             if (this.game.inputHandler.keys.has('a')) {
-                this.velocityX = -this.moveSpeed
+                this.velocityX = -this.moveSpeed * applyMult
                 this.directionX = -1
             } else if (this.game.inputHandler.keys.has('d')) {
-                this.velocityX = this.moveSpeed
+                this.velocityX = this.moveSpeed * applyMult
                 this.directionX = 1
             } else {
                 this.velocityX = 0
@@ -88,10 +102,10 @@ export default class TwinstickPlayer extends GameObject {
             }
 
             if (this.game.inputHandler.keys.has('w')) {
-                this.velocityY = -this.moveSpeed
+                this.velocityY = -this.moveSpeed * applyMult
                 this.directionY = -1
             } else if (this.game.inputHandler.keys.has('s')) {
-                this.velocityY = this.moveSpeed
+                this.velocityY = this.moveSpeed * applyMult
                 this.directionY = 1
             } else {
                 this.velocityY = 0
@@ -150,13 +164,25 @@ export default class TwinstickPlayer extends GameObject {
             this.startReload()
         }
         */
+        if (this.game.inputHandler.keys.has("t") && this.game.hoveringPlantSlot && this.unplanted == false){
+            this.game.hoveringPlantSlot.removePlant()
+            this.unplanted = true
+        }
+        else if (!this.game.inputHandler.keys.has("t")) {
+            this.unplanted = false
+        }
+
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
-            //Planting & unplanting
+            //Planting
             if (this.game.hoveringPlantSlot && !this.firing) {
                 if (this.game.hoveringPlantSlot.state == "unplanted" && this.game.seedHolding) {
                     this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
                     this.game.seedHolding = null
+                    this.game.ui.discardButton.visible = false
                 }
+            }
+            else if (this.game.uiButtonHovering && !this.firing) {
+                this.game.uiButtonHovering.activate()
             }
             else {
                 //Shooting
