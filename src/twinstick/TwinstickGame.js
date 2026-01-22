@@ -5,6 +5,7 @@ import TwinstickArena from "./TwinstickArena.js"
 import EnemySpawner from "./EnemySpawner.js"
 import PlantSlot from "./PlantSlot.js"
 import SeedPicker from "./plants/SeedPicker.js"
+import MainMenu from "../menus/MainMenu.js"
 import UiButton from "../UiButton.js"
 
 export default class TwinstickGame extends GameBase {
@@ -32,6 +33,8 @@ export default class TwinstickGame extends GameBase {
         this.hoveringPlantSlot = null
 
         this.init()
+
+        this.currentMenu = new MainMenu(this)
     }
 
     init() {
@@ -101,6 +104,19 @@ export default class TwinstickGame extends GameBase {
         // Uppdatera spel-logik varje frame
         const playerPrevX = this.player.x
         const playerPrevY = this.player.y
+
+        if (this.gameState === 'MENU' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
+        }
+                
+            // Kolla Escape för att öppna menyn under spel
+        if (this.inputHandler.keys.has('Escape') && this.gameState === 'PLAYING') {
+            this.gameState = 'MENU'
+            this.currentMenu = new MainMenu(this)
+            return
+        }
         
         // Uppdatera spawner
         if (this.spawner) {
