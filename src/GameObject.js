@@ -184,7 +184,7 @@ export default class GameObject {
     }
     
     // Hjälpmetod för att ladda sprite med error handling
-    loadSprite(animationName, imagePath, frames, frameInterval = null, frameWidth = null, frameHeight = null) {
+    loadSprite(animationName, imagePath, frames, frameInterval = null, frameWidth = null, frameHeight = null, options = {}) {
         if (!this.animations) {
             this.animations = {}
         }

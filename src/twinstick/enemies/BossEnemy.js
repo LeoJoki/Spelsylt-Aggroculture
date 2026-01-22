@@ -1,4 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
+import Biter from "../../assets/enemies/biter.png"
+
 
 /**
  * Boss fiende
@@ -16,6 +18,9 @@ export default class BossEnemy extends TwinstickEnemy {
             shootCooldownDuration: 500,  // Skjuter mycket ofta
             shootRange: 1000        // Mycket lång räckvidd
         })
+        this.state = "idle"
+        this.loadSprite("idle",Biter,1,0,32,32)
+        this.setAnimation("idle")
         //fienden som skjuter fast stor
         this.enemyType = 'boss'
     }
