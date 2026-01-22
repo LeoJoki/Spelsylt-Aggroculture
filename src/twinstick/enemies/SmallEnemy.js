@@ -1,4 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
+import biter from "../assets/enemies/biter.png"
+
 
 /**
  * Liten snabb fiende
@@ -16,6 +18,7 @@ export default class SmallEnemy extends TwinstickEnemy {
             shootRange: 45,        // Kort räckvidd
             maxshootrange: 60
         })
+        this.loadSprite("biter",0,32,32)
         //fienden som slår
         this.enemyType = 'small'
     }
