@@ -19,7 +19,7 @@ export default class SmallEnemy extends TwinstickEnemy {
             maxshootrange: 60,
         })
 
-        const BiterrunOptions = {
+        /*const BiterrunOptions = {
             framesX: 4,
             framesY: 1,
             frameInterval: 100,
@@ -28,9 +28,9 @@ export default class SmallEnemy extends TwinstickEnemy {
             sourceX: 0,
             sourceY: 0,
             scale: 1
-        }
-        this.loadSprite("chase",Biterrun, BiterrunOptions)
-        Biterrunoptions.sourcex = 0
+        }*/
+        this.loadSprite("chase",Biterrun, /*BiterrunOptions*/)
+        /*Biterrunoptions.sourcex = 0*/
         this.setAnimation("chase")
 
        /* this.loadSprite("shoot",Biterbiting,1,0,32,32)
