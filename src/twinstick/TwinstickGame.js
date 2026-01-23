@@ -77,7 +77,16 @@ export default class TwinstickGame extends GameBase {
     }
     
     restart() {
-        // Återställ spelet till initial state
+        this.enemies.forEach(enemy => {
+            enemy.takeDamage(100)
+        })
+        this.enemyProjectiles.forEach(projectile => {
+            projectile.markedForDeletion = true
+        })
+        this.score = 0
+        this.init()
+        this.gameState = 'PLAYING'
+        this.currentMenu = null
     }
 
     /*
@@ -143,6 +152,12 @@ export default class TwinstickGame extends GameBase {
             this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
             return
         }
+
+        if (this.player.health <= 0 && this.gameState === 'PLAYING') {
+            this.gameState = 'GAME_OVER'
+            const finalScore = this.score
+            console.log(finalScore)
+        }
                 
             // Kolla Escape för att öppna menyn under spel
         if (this.inputHandler.keys.has('Escape') && this.gameState === 'PLAYING') {
@@ -165,6 +180,13 @@ export default class TwinstickGame extends GameBase {
         // Spara nya positionen efter update
         const playerNewX = this.player.x
         const playerNewY = this.player.y
+
+        if (this.inputHandler.keys.has('r') || this.inputHandler.keys.has('R')) {
+            if (this.gameState === 'GAME_OVER' || this.gameState === 'WIN') {
+                this.restart()
+                return
+            }
+        }
         
         // Testa X-axeln: Använd nya X men gamla Y
         this.player.y = playerPrevY
