@@ -1,4 +1,5 @@
 import GameObject from "../GameObject.js"
+import Spot from "../assets/projectiles/testProjektile.png"
 
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {
@@ -36,6 +37,22 @@ export default class TwinstickPlayer extends GameObject {
 
         this.firing = false
         this.unplanted = false
+
+        this.spriteConfig = {
+            imagePath: Spot,
+            width: 8,
+            height: 8
+        }
+
+        this.projectileConfig = {
+            target:"enemy",
+            imagePath: "../sum/sum",
+            speed: 0.6,
+            width: 32,
+            height: 32,
+            maxShootRange : 1200,
+            spriteConfig : this.spriteConfig
+        }
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -270,17 +287,9 @@ export default class TwinstickPlayer extends GameObject {
         const directionY = dy / distance
 
         // config bestämmer värden på projektilen, som target, storlek, hastighet, m.m
-        let config = {
-            target:"enemy",
-            imagePath: "../sum/sum",
-            speed: 0.6,
-            width: 12,
-            height: 12,
-            maxShootRange : 1200
-        }
         
         // Skapa projektil från spelarens position
-        this.game.addProjectile(centerX, centerY, directionX, directionY, config)
+        this.game.addProjectile(centerX, centerY, directionX, directionY, this.projectileConfig)
         
         // Minska ammo
     }

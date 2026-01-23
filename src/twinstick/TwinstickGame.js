@@ -97,12 +97,19 @@ export default class TwinstickGame extends GameBase {
     }
     */
 
-    addProjectile(x, y, directionX, directionY, config = {}, spriteConfig = {}) {
+    addProjectile(x, y, directionX, directionY, config = {}) {
         // Skapa en ny projektil med Projectile-klassen
         const projectile = new Projectile(this, x, y, directionX, directionY)
         projectile.speed = config.speed ? config.speed : 0.6 // Twinstick är snabbare än platformer
         projectile.width = config.width ? config.width : 8
         projectile.height = config.height ? config.height : 8
+
+        if (config.spriteConfig) {
+            projectile.hasSprite = true
+            projectile.loadSprite("projectile",config.spriteConfig.imagePath,1,0,config.spriteConfig.width,config.spriteConfig.height)
+            projectile.setAnimation("projectile")
+            projectile.updateAnimation(0.01)
+        }
 
         if (config.target == "enemy") {
             projectile.color = 'yellow'
