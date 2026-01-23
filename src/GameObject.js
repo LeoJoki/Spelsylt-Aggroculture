@@ -233,7 +233,7 @@ export default class GameObject {
     }
     
     // Rita sprite (anropa i subklassens draw för att rita sprite)
-    drawSprite(ctx, camera = null, flipHorizontal = false) {
+    drawSprite(ctx, camera = null, flipHorizontal = false, rotation = 0, isProjectile = false) {
         if (!this.spriteLoaded || !this.animations || !this.currentAnimation) return false
         
         const anim = this.animations[this.currentAnimation]
@@ -242,32 +242,45 @@ export default class GameObject {
 
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
+
+        let centerX = 0
+        let centerY = 0
+
+        if (isProjectile) {
+            centerX = -this.width/2
+            centerY = -this.height/2
+        }
         
         ctx.save()
+
+
         
         if (flipHorizontal) {
             ctx.translate(screenX + this.width, screenY)
             ctx.scale(-1, 1)
+            ctx.rotate(rotation)
             ctx.drawImage(
                 anim.image,
                 this.frameIndex * frameWidth,
                 0,
                 frameWidth,
                 frameHeight,
-                0,
-                0,
+                centerX,
+                centerY,
                 this.width,
                 this.height
             )
         } else {
+            ctx.translate(screenX,screenY)
+            ctx.rotate(rotation)
             ctx.drawImage(
                 anim.image,
                 this.frameIndex * frameWidth,
                 0,
                 frameWidth,
                 frameHeight,
-                screenX,
-                screenY,
+                centerX,
+                centerY,
                 this.width,
                 this.height
             )

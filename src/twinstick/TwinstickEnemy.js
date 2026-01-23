@@ -21,7 +21,7 @@ export default class TwinstickEnemy extends GameObject {
         this.maxHealth = config.maxHealth || 3
         this.shootCooldownDuration = config.shootCooldownDuration || 2000
         this.shootRange = config.shootRange || 300
-        this.maxshootrange = config.maxshootrange
+        this.maxshootrange =  config.projectileConfig ? config.projectileConfig.maxshootrange || 800 : 800
         
         // Gemensamma properties
         this.velocityX = 0
@@ -30,6 +30,7 @@ export default class TwinstickEnemy extends GameObject {
         this.shootCooldown = 0
         this.state = 'idle' // idle, chase, seek, shoot
         this.lastSeenPosition = { x: x, y: y } // Senaste kända position av spelaren
+        this.projectileConfig = config.projectileConfig || {target:"player"}
     }
     
     update(deltaTime) {
@@ -176,7 +177,7 @@ export default class TwinstickEnemy extends GameObject {
         const directionY = dy / distance
         
         // Skapa fiendens projektil
-        this.game.addEnemyProjectile(centerX, centerY, directionX, directionY, this.maxshootrange)
+        this.game.addProjectile(centerX, centerY, directionX, directionY, this.projectileConfig)
     }
     
     takeDamage(amount) {
