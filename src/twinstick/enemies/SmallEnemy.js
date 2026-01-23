@@ -11,12 +11,27 @@ import Biterbiting from "../../assets/enemies/biterbiting.png"
  */
 export default class SmallEnemy extends TwinstickEnemy {
     constructor(game, x, y) {
+        let spriteConfig = {
+            imagePath: "../sum/sum",
+            width: 16,
+            height: 16
+        }
+        
+        let projectileConfig = {
+            target: "player",
+            speed: 1,
+            width: 12,
+            height: 12,
+            maxShootRange: 50,
+        }
+
+
         super(game, x, y, 32, 32, {
             moveSpeed: 0.25,       // Snabbare än normalt
             maxHealth: 3,          // Låg hälsa
             shootCooldownDuration: 1000,
-            shootRange: 45,        // Kort räckvidd
-            maxshootrange: 60,
+            shootRange: 100,        // Kort räckvidd
+            projectileConfig: projectileConfig,
         })
 
         /*const BiterrunOptions = {

@@ -268,9 +268,19 @@ export default class TwinstickPlayer extends GameObject {
         // Normalisera riktningen
         const directionX = dx / distance
         const directionY = dy / distance
+
+        // config bestämmer värden på projektilen, som target, storlek, hastighet, m.m
+        let config = {
+            target:"enemy",
+            imagePath: "../sum/sum",
+            speed: 0.6,
+            width: 12,
+            height: 12,
+            maxShootRange : 1200
+        }
         
         // Skapa projektil från spelarens position
-        this.game.addProjectile(centerX, centerY, directionX, directionY)
+        this.game.addProjectile(centerX, centerY, directionX, directionY, config)
         
         // Minska ammo
     }

@@ -79,17 +79,43 @@ export default class TwinstickGame extends GameBase {
     restart() {
         // Återställ spelet till initial state
     }
-    
-    addProjectile(x, y, directionX, directionY) {
-        // Skapa en ny projektil med Projectile-klassen
-        const projectile = new Projectile(this, x, y, directionX, directionY)
-        projectile.speed = 0.6 // Twinstick är snabbare än platformer
-        projectile.color = 'yellow'
-        projectile.width = 8
-        projectile.height = 8
-        this.projectiles.push(projectile)
+
+    /*
+    spriteConfig = {
+        imagePath: "../sum/sum"
+        width: 16
+        height: 16
     }
     
+    config = {
+        target: "player" or "enemy",
+        speed: 0.6,
+        width: 12,
+        height: 12,
+        maxShootRange: 800,
+        spriteConfig : spriteConfig
+    }
+    */
+
+    addProjectile(x, y, directionX, directionY, config = {}, spriteConfig = {}) {
+        // Skapa en ny projektil med Projectile-klassen
+        const projectile = new Projectile(this, x, y, directionX, directionY)
+        projectile.speed = config.speed ? config.speed : 0.6 // Twinstick är snabbare än platformer
+        projectile.width = config.width ? config.width : 8
+        projectile.height = config.height ? config.height : 8
+
+        if (config.target == "enemy") {
+            projectile.color = 'yellow'
+            this.projectiles.push(projectile)
+        }
+        else if (config.target == "player") {
+            projectile.color = 'red'
+            this.enemyProjectiles.push(projectile)
+        }
+        
+    }
+    
+    /*
     addEnemyProjectile(x, y, directionX, directionY, maxshootrange) {
         // Skapa fiendens projektil
         const projectile = new Projectile(this, x, y, directionX, directionY, maxshootrange)
@@ -99,7 +125,7 @@ export default class TwinstickGame extends GameBase {
         projectile.height = 8
         this.enemyProjectiles.push(projectile)
     }
-
+    */
     update(deltaTime) {
         // Uppdatera spel-logik varje frame
         const playerPrevX = this.player.x
