@@ -16,8 +16,17 @@ export default class PlantSlot extends GameObject {
 
         //--- FORMAT FÖR ATT HÄMTA BILDER FRÅN "plants" inom "assets"
         //"../assets/plants/IMAGEFILENAME"
-
-        this.loadSprite("unplanted",Spot,1,0,32,32)
+        const SpotOptions = {
+            framesX: 1,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+        this.loadSprite("unplanted",Spot, SpotOptions)
         this.setAnimation("unplanted")
     }
     draw(ctx, camera) {
@@ -28,8 +37,29 @@ export default class PlantSlot extends GameObject {
     plantSeed(plant) {
         console.log("PLANTED!")
 
-        this.loadSprite("growing",plant.growingSprite,1,0,32,32)
-        this.loadSprite("grown",plant.grownSprite,1,0,32,32)
+        const growingSptrieOptions = {
+            framesX: 0,
+            framesY: 0,
+            frameInterval: 100,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+        const grownSpriteOptions = {
+            framesX: 0,
+            framesY: 0,
+            frameInterval: 100,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+
+        this.loadSprite("growing",plant.growingSprite, growingSptrieOptions)
+        this.loadSprite("grown",plant.grownSprite, grownSpriteOptions)
 
         this.setAnimation("growing")
         this.updateAnimation(0.001)

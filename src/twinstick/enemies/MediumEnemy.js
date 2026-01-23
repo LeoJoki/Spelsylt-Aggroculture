@@ -15,7 +15,8 @@ export default class MediumEnemy extends TwinstickEnemy {
             shootCooldownDuration: 900,
             shootRange: 500        // Normal räckvidd
         })
-        this.loadSprite("chase",Biter,1,0,32,32)
+
+        this.loadSprite("chase",Biter)
         this.setAnimation("chase")
 
         //fienden som skjuter
