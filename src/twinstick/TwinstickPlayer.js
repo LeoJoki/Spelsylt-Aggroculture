@@ -1,4 +1,6 @@
 import GameObject from "../GameObject.js"
+import Johnidle from "../../assets/player/johnidle.png"
+
 
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {
@@ -62,6 +64,19 @@ export default class TwinstickPlayer extends GameObject {
         // this.loadSprite('idle', idleSprite, frameCount, frameInterval)
         // this.loadSprite('walk', walkSprite, frameCount, frameInterval)
         this.currentAnimation = 'idle'
+
+        const JohnidleOptions = {
+            framesX: 7,
+            framesY: 1,
+            frameInterval: 400,
+            frameWidth: 48,
+            frameHeight: 48,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+
+        this.loadSprite("Johnidle", Johnidle, JohnidleOptions)
     }
     
     /**

@@ -1,5 +1,5 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
-import Biter from "../../assets/enemies/pitcherun.png"
+import Pitcherrun from "../../assets/enemies/pitcherrun.png"
 
 
 /**
@@ -21,16 +21,25 @@ export default class LargeEnemy extends TwinstickEnemy {
         const PitcherrunOptions = {
             framesX: 4,
             framesY: 1,
-            frameInterval: 100,
+            frameInterval: 150,
             frameWidth: 32,
             frameHeight: 32,
-            sourceX: 0,
+            sourceX: 15,
             sourceY: 0,
-            scale: 1.2
+            scale: 1.5
         }
         this.loadSprite("seek",Pitcherrun, PitcherrunOptions)
         this.setAnimation("seek")
         //fienden som slår fast stor
         this.enemyType = 'large'
     }
+    update(deltaTime){
+        super.update(deltaTime)
+        this.updateAnimation(deltaTime)
+    }
+
+    draw(ctx, camera) {
+        this.drawSprite(ctx, camera)
+    }
 }
+
