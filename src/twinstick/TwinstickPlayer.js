@@ -1,5 +1,7 @@
 import GameObject from "../GameObject.js"
-import Johnidle from "../../assets/player/johnidle.png"
+import Johnidle from "../assets/player/johnidle.png"
+import Johnshoot from "../assets/player/johnshoot.png"
+import Johnwalk from "../assets/player/johnwalk.png"
 
 
 export default class TwinstickPlayer extends GameObject {
@@ -63,20 +65,32 @@ export default class TwinstickPlayer extends GameObject {
         // TODO: Load sprite animations here when assets are ready
         // this.loadSprite('idle', idleSprite, frameCount, frameInterval)
         // this.loadSprite('walk', walkSprite, frameCount, frameInterval)
-        this.currentAnimation = 'idle'
 
         const JohnidleOptions = {
-            framesX: 7,
+            framesX: 6,
             framesY: 1,
-            frameInterval: 400,
-            frameWidth: 48,
-            frameHeight: 48,
+            frameInterval: 150,
+            frameWidth: 32,
+            frameHeight: 32,
             sourceX: 0,
             sourceY: 0,
-            scale: 1
+            scale: 1.8
         }
 
-        this.loadSprite("Johnidle", Johnidle, JohnidleOptions)
+        this.loadSprite("idle", Johnidle, JohnidleOptions)
+        this.currentAnimation = 'idle'
+
+        const JohnwalkOptions = {
+            framesX: 5,
+            framesY: 1,
+            frameInterval: 150,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1.8
+        }
+        this.loadSprite("move", Johnwalk, JohnwalkOptions)
     }
     
     /**
@@ -103,12 +117,14 @@ export default class TwinstickPlayer extends GameObject {
             else if (this.speedMultiplier < 0) {
                 applyMult = 1 / (1 - this.speedMultiplier)
             }
-
+            
             // Normal rörelse (endast när inte dashar)
             if (this.game.inputHandler.keys.has('a')) {
+                this.currentAnimation = 'move'
                 this.velocityX = -this.moveSpeed * applyMult
                 this.directionX = -1
             } else if (this.game.inputHandler.keys.has('d')) {
+                this.currentAnimation = 'move'
                 this.velocityX = this.moveSpeed * applyMult
                 this.directionX = 1
             } else {
@@ -117,9 +133,11 @@ export default class TwinstickPlayer extends GameObject {
             }
 
             if (this.game.inputHandler.keys.has('w')) {
+                this.currentAnimation = 'move'
                 this.velocityY = -this.moveSpeed * applyMult
                 this.directionY = -1
             } else if (this.game.inputHandler.keys.has('s')) {
+                this.currentAnimation = 'move'
                 this.velocityY = this.moveSpeed * applyMult
                 this.directionY = 1
             } else {
@@ -144,7 +162,7 @@ export default class TwinstickPlayer extends GameObject {
         
         // Uppdatera animation state baserat på movement
         if (this.velocityX !== 0 || this.velocityY !== 0) {
-            this.setAnimation('walk')
+            this.setAnimation('move')
         } else {
             this.setAnimation('idle')
         }
@@ -288,6 +306,19 @@ export default class TwinstickPlayer extends GameObject {
         this.game.addProjectile(centerX, centerY, directionX, directionY)
         
         // Minska ammo
+        const JohnshootOptions = {
+            framesX: 3,
+            framesY: 1,
+            frameInterval: 1000,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 2
+        }
+
+        this.loadSprite("shoot", Johnshoot, JohnshootOptions)
+        this.currentAnimation = 'shoot'
     }
     
     takeDamage(amount) {
