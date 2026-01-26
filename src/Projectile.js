@@ -10,6 +10,7 @@ export default class Projectile extends GameObject {
         this.startY = y
         this.maxDistance = maxDistance // Max en skärm långt
         this.color = 'orange'
+        this.hasSprite = false
     }
     
     update(deltaTime) {
@@ -32,7 +33,25 @@ export default class Projectile extends GameObject {
         const screenY = camera ? this.y - camera.y : this.y
         
         // Rita projektilen som en avlång rektangel
-        ctx.fillStyle = this.color
-        ctx.fillRect(screenX, screenY, this.width, this.height)
+
+
+        let rotation = Math.atan2(this.directionY,this.directionX)
+
+
+
+        if (this.hasSprite) {
+            this.drawSprite(ctx,camera, false, rotation + Math.PI/2, true)
+        }
+        else {
+            ctx.save()
+
+            ctx.translate(screenX + this.width/2,screenY + this.height/2)
+            ctx.rotate(rotation + Math.PI/2)
+
+            ctx.fillStyle = this.color
+            ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height)
+
+            ctx.restore()
+        }
     }
 }

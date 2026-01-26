@@ -1,4 +1,5 @@
 import GameObject from "../GameObject.js"
+import Spot from "../assets/projectiles/testProjektile.png"
 import Johnidle from "../assets/player/johnidle.png"
 import Johnshoot from "../assets/player/johnshoot.png"
 import Johnwalk from "../assets/player/johnwalk.png"
@@ -40,6 +41,22 @@ export default class TwinstickPlayer extends GameObject {
 
         this.firing = false
         this.unplanted = false
+
+        this.spriteConfig = {
+            imagePath: Spot,
+            width: 8,
+            height: 8
+        }
+
+        this.projectileConfig = {
+            target:"enemy",
+            imagePath: "../sum/sum",
+            speed: 0.6,
+            width: 32,
+            height: 32,
+            maxShootRange : 1200,
+            spriteConfig : this.spriteConfig
+        }
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -301,9 +318,11 @@ export default class TwinstickPlayer extends GameObject {
         // Normalisera riktningen
         const directionX = dx / distance
         const directionY = dy / distance
+
+        // config bestämmer värden på projektilen, som target, storlek, hastighet, m.m
         
         // Skapa projektil från spelarens position
-        this.game.addProjectile(centerX, centerY, directionX, directionY)
+        this.game.addProjectile(centerX, centerY, directionX, directionY, this.projectileConfig)
         
         // Minska ammo
         const JohnshootOptions = {

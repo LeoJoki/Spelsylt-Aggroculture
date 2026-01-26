@@ -2,7 +2,6 @@ import DiscardButton from "./DiscardButton"
 import GameObject from "./GameObject"
 import UiButton from "./UiButton"
 
-
 export default class UserInterface {
     constructor(game) {
         this.game = game
@@ -26,6 +25,8 @@ export default class UserInterface {
             this.drawGameOver(ctx)
         } else if (this.game.gameState === 'WIN') {
             this.drawWin(ctx)
+        } else if (this.game.gameState === 'MENU') {
+            this.drawMenu(ctx)
         }
     }
 
@@ -63,6 +64,14 @@ export default class UserInterface {
         // Bottom-right: Score
         ctx.textAlign = 'right'
         ctx.fillText(`Score: ${this.game.score}`, this.game.width - 20, this.game.height - 20)
+        ctx.textAlign = 'left'
+
+        ctx.textAlign = 'right'
+        ctx.fillText(`Wave: ${this.game.spawner.currentWave + 1}`, this.game.width - 20, this.game.height - 640)
+        ctx.textAlign = 'left'
+
+        ctx.textAlign = 'right'
+        ctx.fillText(`Enemies left: ${this.game.spawner.enemiesInWave - this.game.spawner.enemiesKilled}`, this.game.width - 20, this.game.height - 600)
         ctx.textAlign = 'left'
 
         if (this.game.seedHolding) {
@@ -249,7 +258,6 @@ export default class UserInterface {
         ctx.fillStyle = '#FFFFFF'
         ctx.font = '30px Arial'
         ctx.fillText(`Final Score: ${this.game.score}`, this.game.width / 2, this.game.height / 2 + 20)
-        ctx.fillText(`Coins: ${this.game.coinsCollected}/${this.game.totalCoins}`, this.game.width / 2, this.game.height / 2 + 60)
 
         // Restart instruktion
         ctx.font = '24px Arial'
@@ -273,13 +281,24 @@ export default class UserInterface {
         // Score
         ctx.fillStyle = '#FFFFFF'
         ctx.font = '30px Arial'
-        ctx.fillText(`All Coins Collected!`, this.game.width / 2, this.game.height / 2 + 20)
         ctx.fillText(`Final Score: ${this.game.score}`, this.game.width / 2, this.game.height / 2 + 60)
 
         // Restart instruktion
         ctx.font = '24px Arial'
         ctx.fillText('Press R to Play Again', this.game.width / 2, this.game.height / 2 + 120)
         ctx.restore()
+    }
+
+    drawMenu(ctx) {
+        ctx.fillStyle = '#000000'
+        ctx.fillRect(0, 0, this.game.width, this.game.height)
+        ctx.fillStyle = '#FFFFFF'
+        ctx.textAlign = 'center'
+        ctx.font = '46px Arial'
+        ctx.fillText(`AGGROCULTURE!`, this.game.width / 2, this.game.height - 500)
+        ctx.font = '28px Arial'
+        ctx.fillText(`Press SPACE to start!`, this.game.width / 2, this.game.height - 450)
+        ctx.textAlign = 'left'
     }
 
     drawSeedHolding(ctx) {

@@ -129,7 +129,7 @@ export default class TwinstickArena {
         this.walls.push(new Platform(
             this.game,
             worldWidth / 2.25,
-            worldHeight / 4,
+            worldHeight / 4.75,
             blockSize,
             blockSize,
             blockColor

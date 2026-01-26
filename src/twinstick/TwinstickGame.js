@@ -5,6 +5,7 @@ import TwinstickArena from "./TwinstickArena.js"
 import EnemySpawner from "./EnemySpawner.js"
 import PlantSlot from "./PlantSlot.js"
 import SeedPicker from "./plants/SeedPicker.js"
+import MainMenu from "../menus/MainMenu.js"
 import UiButton from "../UiButton.js"
 
 export default class TwinstickGame extends GameBase {
@@ -32,6 +33,8 @@ export default class TwinstickGame extends GameBase {
         this.hoveringPlantSlot = null
 
         this.init()
+
+        this.currentMenu = new MainMenu(this)
     }
 
     init() {
@@ -74,19 +77,61 @@ export default class TwinstickGame extends GameBase {
     }
     
     restart() {
-        // Återställ spelet till initial state
+        this.enemies.forEach(enemy => {
+            enemy.takeDamage(100)
+        })
+        this.enemyProjectiles.forEach(projectile => {
+            projectile.markedForDeletion = true
+        })
+        this.score = 0
+        this.init()
+        this.gameState = 'PLAYING'
+        this.currentMenu = null
+    }
+
+    /*
+    spriteConfig = {
+        imagePath: "../sum/sum"
+        width: 16
+        height: 16
     }
     
-    addProjectile(x, y, directionX, directionY) {
+    config = {
+        target: "player" or "enemy",
+        speed: 0.6,
+        width: 12,
+        height: 12,
+        maxShootRange: 800,
+        spriteConfig : spriteConfig
+    }
+    */
+
+    addProjectile(x, y, directionX, directionY, config = {}) {
         // Skapa en ny projektil med Projectile-klassen
         const projectile = new Projectile(this, x, y, directionX, directionY)
-        projectile.speed = 0.6 // Twinstick är snabbare än platformer
-        projectile.color = 'yellow'
-        projectile.width = 8
-        projectile.height = 8
-        this.projectiles.push(projectile)
+        projectile.speed = config.speed ? config.speed : 0.6 // Twinstick är snabbare än platformer
+        projectile.width = config.width ? config.width : 8
+        projectile.height = config.height ? config.height : 8
+
+        if (config.spriteConfig) {
+            projectile.hasSprite = true
+            projectile.loadSprite("projectile",config.spriteConfig.imagePath,1,0,config.spriteConfig.width,config.spriteConfig.height)
+            projectile.setAnimation("projectile")
+            projectile.updateAnimation(0.01)
+        }
+
+        if (config.target == "enemy") {
+            projectile.color = 'yellow'
+            this.projectiles.push(projectile)
+        }
+        else if (config.target == "player") {
+            projectile.color = 'red'
+            this.enemyProjectiles.push(projectile)
+        }
+        
     }
     
+    /*
     addEnemyProjectile(x, y, directionX, directionY, maxshootrange) {
         // Skapa fiendens projektil
         const projectile = new Projectile(this, x, y, directionX, directionY, maxshootrange)
@@ -96,11 +141,30 @@ export default class TwinstickGame extends GameBase {
         projectile.height = 8
         this.enemyProjectiles.push(projectile)
     }
-
+    */
     update(deltaTime) {
         // Uppdatera spel-logik varje frame
         const playerPrevX = this.player.x
         const playerPrevY = this.player.y
+
+        if (this.gameState === 'MENU' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
+        }
+
+        if (this.player.health <= 0 && this.gameState === 'PLAYING') {
+            this.gameState = 'GAME_OVER'
+            const finalScore = this.score
+            console.log(finalScore)
+        }
+                
+            // Kolla Escape för att öppna menyn under spel
+        if (this.inputHandler.keys.has('Escape') && this.gameState === 'PLAYING') {
+            this.gameState = 'MENU'
+            this.currentMenu = new MainMenu(this)
+            return
+        }
         
         // Uppdatera spawner
         if (this.spawner) {
@@ -116,6 +180,13 @@ export default class TwinstickGame extends GameBase {
         // Spara nya positionen efter update
         const playerNewX = this.player.x
         const playerNewY = this.player.y
+
+        if (this.inputHandler.keys.has('r') || this.inputHandler.keys.has('R')) {
+            if (this.gameState === 'GAME_OVER' || this.gameState === 'WIN') {
+                this.restart()
+                return
+            }
+        }
         
         // Testa X-axeln: Använd nya X men gamla Y
         this.player.y = playerPrevY
