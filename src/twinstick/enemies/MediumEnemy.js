@@ -1,5 +1,5 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
-import Biter from "../../assets/enemies/biter.png"
+import Gunflowerrun from "../../assets/enemies/gunflowerrun.png"
 
 /**
  * Medium balanserad fiende
@@ -15,10 +15,30 @@ export default class MediumEnemy extends TwinstickEnemy {
             shootCooldownDuration: 900,
             shootRange: 500        // Normal räckvidd
         })
-        this.loadSprite("chase",Biter,1,0,32,32)
-        this.setAnimation("chase")
 
-        //fienden som skjuter
-        this.enemyType = 'medium'
+        const GunflowerrunOptions = {
+            framesX: 4,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 32,
+            scale: 1.4
+        }
+        this.loadSprite("seek",Gunflowerrun, GunflowerrunOptions)
+        this.setAnimation("seek")
+        //fienden som slårdsaduiadbauo
+        this.enemyType = 'small'
+        
+    }
+
+    update(deltaTime){
+        super.update(deltaTime)
+        this.updateAnimation(deltaTime)
+    }
+
+    draw(ctx, camera) {
+        this.drawSprite(ctx, camera)
     }
 }

@@ -1,5 +1,5 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
-import Biter from "../../assets/enemies/biter.png"
+import Pitcherrun from "../../assets/enemies/pitcherrun.png"
 
 
 /**
@@ -18,10 +18,28 @@ export default class LargeEnemy extends TwinstickEnemy {
             shootRange: 45,        // Kort räckvidd
             maxshootrange: 60      // Lång räckvidd
         })
-        this.state = "idle"
-        this.loadSprite("idle",Biter,1,0,32,32)
-        this.setAnimation("idle")
+        const PitcherrunOptions = {
+            framesX: 4,
+            framesY: 1,
+            frameInterval: 150,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 15,
+            sourceY: 0,
+            scale: 1.5
+        }
+        this.loadSprite("seek",Pitcherrun, PitcherrunOptions)
+        this.setAnimation("seek")
         //fienden som slår fast stor
         this.enemyType = 'large'
     }
+    update(deltaTime){
+        super.update(deltaTime)
+        this.updateAnimation(deltaTime)
+    }
+
+    draw(ctx, camera) {
+        this.drawSprite(ctx, camera)
+    }
 }
+

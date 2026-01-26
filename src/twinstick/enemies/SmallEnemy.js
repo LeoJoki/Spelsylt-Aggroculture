@@ -34,7 +34,7 @@ export default class SmallEnemy extends TwinstickEnemy {
             projectileConfig: projectileConfig,
         })
 
-        /*const BiterrunOptions = {
+        const BiterrunOptions = {
             framesX: 4,
             framesY: 1,
             frameInterval: 100,
@@ -42,19 +42,20 @@ export default class SmallEnemy extends TwinstickEnemy {
             frameHeight: 32,
             sourceX: 0,
             sourceY: 0,
-            scale: 1
-        }*/
-        this.loadSprite("chase",Biterrun, /*BiterrunOptions*/)
-        /*Biterrunoptions.sourcex = 0*/
-        this.setAnimation("chase")
-
-       /* this.loadSprite("shoot",Biterbiting,1,0,32,32)
-        this.setAnimation("shoot")
-        this.loadSprite("idle",Biter,1,0,32,32)
-        this.setAnimation("idle")*/
+            scale: 1.2
+        }
+        this.loadSprite("seek",Biterrun, BiterrunOptions)
+        this.setAnimation("seek")
         //fienden som slårdsaduiadbauo
         this.enemyType = 'small'
+        
     }
+
+    update(deltaTime){
+        super.update(deltaTime)
+        this.updateAnimation(deltaTime)
+    }
+
     draw(ctx, camera) {
         this.drawSprite(ctx, camera)
     }

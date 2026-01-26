@@ -2,6 +2,7 @@ import GameObject from '../GameObject.js'
 import Platform from '../Platform.js'
 import Field from "../assets/plants/field.png"
 import Grass from "../assets/plants/grass.png"
+import Barn from "../assets/player/barn.png"
 
 /**
  * Arena för twinstick shooter

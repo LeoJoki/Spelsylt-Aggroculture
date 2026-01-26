@@ -182,48 +182,61 @@ export default class GameObject {
             this.frameTimer = 0
         }
     }
-    
+
     // Hjälpmetod för att ladda sprite med error handling
-    loadSprite(animationName, imagePath, frames, frameInterval = null, frameWidth = null, frameHeight = null, options = {}) {
+    loadSprite(animationName, imagePath, options = {}) {
         if (!this.animations) {
             this.animations = {}
         }
-        
+
         const img = new Image()
         img.src = imagePath
-        
+
         img.onload = () => {
             this.spriteLoaded = true
         }
-        
+
         img.onerror = () => {
             console.error(`Failed to load sprite: ${imagePath} for animation: ${animationName}`)
         }
-        
+ 
+        const framesX = options.framesX
+        const framesY = options.framesY || 1
+        const frameInterval = options.frameInterval || null
+        const sourceWidth = options.frameWidth || (img.width / framesX)
+        const sourceHeight = options.frameHeight || (img.height / framesY)
+        const sourceX = options.sourceX || 0
+        const sourceY = options.sourceY || 0
+        const scale = options.scale || 1
+
         this.animations[animationName] = {
             image: img,
-            frames: frames,
+            framesX: framesX,
+            framesY: framesY,
             frameInterval: frameInterval,
-            frameWidth: frameWidth || (img.width / frames),
-            frameHeight: frameHeight || img.height
+            frameWidth: sourceWidth,
+            frameHeight: sourceHeight,
+            sourceX: sourceX,
+            sourceY: sourceY,
+            scale: scale
         }
     }
-    
+
     // Uppdatera animation frame (anropa i subklassens update)
     updateAnimation(deltaTime) {
         if (!this.animations || !this.currentAnimation) return
-        
+
         const anim = this.animations[this.currentAnimation]
-        if (anim.frames > 1) {
+        if (anim.framesX > 1) {
             // Använd animation-specifik frameInterval om den finns, annars default
             const interval = anim.frameInterval || this.frameInterval
-            
+
             this.frameTimer += deltaTime
             if (this.frameTimer >= interval) {
-                const wasLastFrame = this.frameIndex === anim.frames - 1
-                this.frameIndex = (this.frameIndex + 1) % anim.frames
+                const wasLastFrame = this.frameIndex === anim.framesX - 1
+                this.frameIndex = (this.frameIndex + 1) % anim.framesX
                 this.frameTimer = 0
-                
+
                 // Anropa completion callback när animation är klar
                 if (wasLastFrame && this.onAnimationComplete) {
                     this.onAnimationComplete(this.currentAnimation)
@@ -231,14 +244,15 @@ export default class GameObject {
             }
         }
     }
-    
+
     // Rita sprite (anropa i subklassens draw för att rita sprite)
     drawSprite(ctx, camera = null, flipHorizontal = false, rotation = 0, isProjectile = false) {
         if (!this.spriteLoaded || !this.animations || !this.currentAnimation) return false
-        
+
         const anim = this.animations[this.currentAnimation]
         const frameWidth = anim.frameWidth
         const frameHeight = anim.frameHeight
+        const scale = anim.scale || 1
 
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
@@ -251,42 +265,43 @@ export default class GameObject {
             centerY = -this.height/2
         }
         
+        const renderWidth = this.width * scale
+        const renderHeight = this.height * scale
+
         ctx.save()
-
-
-        
         if (flipHorizontal) {
-            ctx.translate(screenX + this.width, screenY)
+            ctx.translate(screenX + renderWidth, screenY)
             ctx.scale(-1, 1)
             ctx.rotate(rotation)
             ctx.drawImage(
                 anim.image,
-                this.frameIndex * frameWidth,
-                0,
+                anim.sourceX + this.frameIndex * frameWidth,
+                anim.sourceY + frameHeight * (anim.framesY - 1),
                 frameWidth,
                 frameHeight,
                 centerX,
                 centerY,
-                this.width,
-                this.height
+                renderWidth,
+                renderHeight
             )
         } else {
             ctx.translate(screenX,screenY)
             ctx.rotate(rotation)
             ctx.drawImage(
                 anim.image,
-                this.frameIndex * frameWidth,
-                0,
+                anim.sourceX + this.frameIndex * frameWidth,
+                anim.sourceY + frameHeight * (anim.framesY - 1),
                 frameWidth,
                 frameHeight,
                 centerX,
                 centerY,
-                this.width,
-                this.height
+                renderWidth,
+                renderHeight
             )
         }
-        
+
         ctx.restore()
         return true // Returnera true om sprite ritades
     }
+    
 }
