@@ -6,6 +6,7 @@ import EnemySpawner from "./EnemySpawner.js"
 import PlantSlot from "./PlantSlot.js"
 import SeedPicker from "./plants/SeedPicker.js"
 import MainMenu from "../menus/MainMenu.js"
+import GameOverMenu from "../menus/GameOverMenu.js"
 import UiButton from "../UiButton.js"
 
 export default class TwinstickGame extends GameBase {
@@ -155,8 +156,20 @@ export default class TwinstickGame extends GameBase {
 
         if (this.player.health <= 0 && this.gameState === 'PLAYING') {
             this.gameState = 'GAME_OVER'
-            const finalScore = this.score
-            console.log(finalScore)
+            this.currentMenu = new GameOverMenu(this)
+            return
+        }
+
+        if (this.gameState === 'GAME_OVER' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
+        }
+
+        if (this.gameState === 'CREDITS' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
         }
                 
             // Kolla Escape för att öppna menyn under spel
