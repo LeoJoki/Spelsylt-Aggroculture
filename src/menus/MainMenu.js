@@ -17,13 +17,13 @@ export default class MainMenu extends Menu {
                     this.game.inputHandler.keys.clear()
                 }
             },
-            {
+            /*{
                 text: 'Controls',
                 key: 'c',
                 action: () => {
                     this.game.currentMenu = new ControlsMenu(this.game)
                 }
-            }
+            }*/
         ]
     }
 }
