@@ -10,7 +10,7 @@ import Pitcherrun from "../../assets/enemies/pitcherrun.png"
  */
 export default class LargeEnemy extends TwinstickEnemy {
     constructor(game, x, y) {
-        super(game, x, y, 48, 48, {
+        super(game, x, y, 64, 64, {
             color: '#8B4513',      // Brun
             moveSpeed: 0.2,       // Långsam
             maxHealth: 15,          // Hög hälsa
@@ -26,7 +26,7 @@ export default class LargeEnemy extends TwinstickEnemy {
             frameHeight: 32,
             sourceX: 15,
             sourceY: 0,
-            scale: 1.5
+            scale: 1
         }
         this.loadSprite("seek",Pitcherrun, PitcherrunOptions)
         this.setAnimation("seek")

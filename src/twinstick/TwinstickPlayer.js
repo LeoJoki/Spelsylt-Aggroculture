@@ -3,7 +3,7 @@ import Johnidle from "../assets/player/johnidle.png"
 import Johnshoot from "../assets/player/johnshoot.png"
 import Johnwalk from "../assets/player/johnwalk.png"
 
-import Spot from "../assets/projectiles/testProjektile.png"
+import Spot from "../assets/projectiles/playerShot.png"
 
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {
@@ -34,29 +34,25 @@ export default class TwinstickPlayer extends GameObject {
         
         // Shooting system
         this.shootCooldown = 0
-        this.shootCooldownDuration = 200 // Millisekunder mellan skott
+        this.shootCooldownDuration = 1000 // Millisekunder mellan skott
+        this.burst = 2
+        this.spread = 6
         this.shootCooldownMultiplier = 0
 
-        this.damage = 1
+        this.damage = 2
 
         this.firing = false
         this.unplanted = false
 
         this.spriteConfig = {
             imagePath: Spot,
-            width: 8,
-            height: 8
+            width: 3,
+            height: 3
         }
 
-        this.projectileConfig = {
-            target:"enemy",
-            imagePath: "../sum/sum",
-            speed: 0.6,
-            width: 32,
-            height: 32,
-            maxShootRange : 1200,
-            spriteConfig : this.spriteConfig
-        }
+        this.projectileSpeed = 0.8
+        this.projectileSize = 20
+
         
         // Ammo system
         /*this.maxAmmo = 8 // Skott per magasin
@@ -83,6 +79,19 @@ export default class TwinstickPlayer extends GameObject {
         // this.loadSprite('idle', idleSprite, frameCount, frameInterval)
         // this.loadSprite('walk', walkSprite, frameCount, frameInterval)
 
+        const JohnshootOptions = {
+            framesX: 3,
+            framesY: 1,
+            frameInterval: 80,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+
+        this.loadSprite("shoot", Johnshoot, JohnshootOptions)
+
         const JohnidleOptions = {
             framesX: 6,
             framesY: 1,
@@ -91,7 +100,7 @@ export default class TwinstickPlayer extends GameObject {
             frameHeight: 32,
             sourceX: 0,
             sourceY: 0,
-            scale: 1.8
+            scale: 1
         }
 
         this.loadSprite("idle", Johnidle, JohnidleOptions)
@@ -105,9 +114,11 @@ export default class TwinstickPlayer extends GameObject {
             frameHeight: 32,
             sourceX: 0,
             sourceY: 0,
-            scale: 1.8
+            scale: 1
         }
         this.loadSprite("move", Johnwalk, JohnwalkOptions)
+
+        this.startTimer("shootingAnim",0)
     }
     
     /**
@@ -137,11 +148,9 @@ export default class TwinstickPlayer extends GameObject {
             
             // Normal rörelse (endast när inte dashar)
             if (this.game.inputHandler.keys.has('a')) {
-                this.currentAnimation = 'move'
                 this.velocityX = -this.moveSpeed * applyMult
                 this.directionX = -1
             } else if (this.game.inputHandler.keys.has('d')) {
-                this.currentAnimation = 'move'
                 this.velocityX = this.moveSpeed * applyMult
                 this.directionX = 1
             } else {
@@ -150,11 +159,9 @@ export default class TwinstickPlayer extends GameObject {
             }
 
             if (this.game.inputHandler.keys.has('w')) {
-                this.currentAnimation = 'move'
                 this.velocityY = -this.moveSpeed * applyMult
                 this.directionY = -1
             } else if (this.game.inputHandler.keys.has('s')) {
-                this.currentAnimation = 'move'
                 this.velocityY = this.moveSpeed * applyMult
                 this.directionY = 1
             } else {
@@ -178,11 +185,19 @@ export default class TwinstickPlayer extends GameObject {
         this.y = Math.max(0, Math.min(this.y, this.game.worldHeight - this.height))
         
         // Uppdatera animation state baserat på movement
-        if (this.velocityX !== 0 || this.velocityY !== 0) {
-            this.setAnimation('move')
-        } else {
-            this.setAnimation('idle')
+        // Ger skjutanimationen tid att sees, kommer inte att updatera animationer så länge timern är på
+        if (this["shootingAnim"] == 0) {
+            if (this.velocityX !== 0 || this.velocityY !== 0) {
+                this.setAnimation('move')
+            } else {
+                this.setAnimation('idle')
+            }
         }
+        else if (this["shootingAnim"]){
+            console.log("updating", this["shootingAnim"])
+            this.updateTimer("shootingAnim", deltaTime)
+        }
+        
         
         // Uppdatera animation frame
         this.updateAnimation(deltaTime)
@@ -224,8 +239,8 @@ export default class TwinstickPlayer extends GameObject {
 
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
             //Planting
-            if (this.game.hoveringPlantSlot && !this.firing) {
-                if (this.game.hoveringPlantSlot.state == "unplanted" && this.game.seedHolding) {
+            if (this.game.hoveringPlantSlot && !this.firing && this.game.seedHolding) {
+                if (this.game.hoveringPlantSlot.state == "unplanted") {
                     this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
                     this.game.seedHolding = null
                     this.game.ui.discardButton.visible = false
@@ -319,25 +334,41 @@ export default class TwinstickPlayer extends GameObject {
         const directionX = dx / distance
         const directionY = dy / distance
 
+
+        let angleSpread = (this.spread)/(this.burst-1)
+        const radPerDeg = 0.0174532925
+
+        
+
         // config bestämmer värden på projektilen, som target, storlek, hastighet, m.m
         
         // Skapa projektil från spelarens position
-        this.game.addProjectile(centerX, centerY, directionX, directionY, this.projectileConfig)
+        for (var i = 0; i < this.burst; i++) {
+            var angle = 0
+
+            if (this.burst > 1) {
+                angle = -this.spread/2 + angleSpread * i
+            }
+            
+            const angledDirX = directionX * Math.cos(radPerDeg*(angle)) - directionY * Math.sin(radPerDeg*(angle))
+            const angledDirY = directionX * Math.sin(radPerDeg*(angle)) + directionY * Math.cos(radPerDeg*(angle))
+
+            let projectileConfig = {
+                target:"enemy",
+                speed: this.projectileSpeed + this.projectileSpeed * 0.15 * Math.random(),
+                width: this.projectileSize,
+                height: this.projectileSize,
+                maxShootRange : 1200,
+                spriteConfig : this.spriteConfig
+            }
+
+            this.game.addProjectile(centerX, centerY, angledDirX, angledDirY, projectileConfig)
+        }
+        
         
         // Minska ammo
-        const JohnshootOptions = {
-            framesX: 3,
-            framesY: 1,
-            frameInterval: 1000,
-            frameWidth: 32,
-            frameHeight: 32,
-            sourceX: 0,
-            sourceY: 0,
-            scale: 2
-        }
-
-        this.loadSprite("shoot", Johnshoot, JohnshootOptions)
-        this.currentAnimation = 'shoot'
+        this.startTimer("shootingAnim",150)
+        this.setAnimation("shoot")
     }
     
     takeDamage(amount) {
@@ -360,7 +391,16 @@ export default class TwinstickPlayer extends GameObject {
         
         const screenX = camera ? this.x - camera.x : this.x
         const screenY = camera ? this.y - camera.y : this.y
-        const spriteDrawn = this.drawSprite(ctx, camera, this.lastDirectionX === -1)
+
+        const mouseX = this.game.inputHandler.mouseX
+
+        let flipped = false
+
+        if (mouseX < screenX) {
+            flipped = true
+        }
+
+        const spriteDrawn = this.drawSprite(ctx, camera, flipped)
         if (!spriteDrawn) {
             // Fallback: Rita spelaren som en rektangel
             ctx.fillStyle = this.color
