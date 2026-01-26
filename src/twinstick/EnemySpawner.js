@@ -57,12 +57,12 @@ export default class EnemySpawner {
 
         for (let i = 0; i < this.waveEnemies; i++){
             this.enemyChoice = this.getRandomInt(6)
-            if (this.enemyChoice >= 0 && this.enemyChoice <= 2) {
-                this.currentWaveEnemies.push('small')
-            } else if (this.enemyChoice >= 3 && this.enemyChoice <= 4) {
+            if (this.enemyChoice <= 0 && this.currentWave >= 5) {
+                this.currentWaveEnemies.push('large')
+            } else if (this.enemyChoice >= 1 && this.enemyChoice <= 2 && this.currentWave >= 2) {
                 this.currentWaveEnemies.push('medium')
             } else {
-                this.currentWaveEnemies.push('large')
+                this.currentWaveEnemies.push('small')
             }
         }
         console.log(this.currentWaveEnemies)
