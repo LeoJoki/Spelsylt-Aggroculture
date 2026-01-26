@@ -4,6 +4,9 @@ import Johnidle from "../assets/player/johnidle.png"
 import Johnshoot from "../assets/player/johnshoot.png"
 import Johnwalk from "../assets/player/johnwalk.png"
 
+=========
+import Spot from "../assets/projectiles/testProjektile.png"
+>>>>>>>>> Temporary merge branch 2
 
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {

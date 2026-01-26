@@ -266,9 +266,6 @@ export default class GameObject {
         }
         
         ctx.save()
-
-
-        
         if (flipHorizontal) {
             ctx.translate(screenX + renderWidth, screenY)
             ctx.scale(-1, 1)
@@ -281,8 +278,8 @@ export default class GameObject {
                 frameHeight,
                 centerX,
                 centerY,
-                this.width,
-                this.height
+                renderWidth,
+                renderHeight
             )
         } else {
             ctx.translate(screenX,screenY)
@@ -295,8 +292,8 @@ export default class GameObject {
                 frameHeight,
                 centerX,
                 centerY,
-                this.width,
-                this.height
+                renderWidth,
+                renderHeight
             )
         }
 
