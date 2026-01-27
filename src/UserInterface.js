@@ -27,6 +27,8 @@ export default class UserInterface {
             this.drawWin(ctx)
         } else if (this.game.gameState === 'MENU') {
             this.drawMenu(ctx)
+        }else if (this.game.gameState === 'CREDITS') {
+            this.drawCredits(ctx)
         }
     }
 
@@ -290,14 +292,47 @@ export default class UserInterface {
     }
 
     drawMenu(ctx) {
-        ctx.fillStyle = '#000000'
+        ctx.fillStyle = '#087509'
         ctx.fillRect(0, 0, this.game.width, this.game.height)
-        ctx.fillStyle = '#FFFFFF'
+        ctx.fillStyle = '#000000'
         ctx.textAlign = 'center'
         ctx.font = '46px Arial'
         ctx.fillText(`AGGROCULTURE!`, this.game.width / 2, this.game.height - 500)
         ctx.font = '28px Arial'
         ctx.fillText(`Press SPACE to start!`, this.game.width / 2, this.game.height - 450)
+        ctx.fillText(`Press C for credits!`, this.game.width / 2, this.game.height - 410)
+        ctx.textAlign = 'left'
+    }
+
+    drawCredits(ctx) {
+        ctx.fillStyle = '#B8008A'
+        ctx.fillRect(0, 0, this.game.width, this.game.height)
+        ctx.fillStyle = '#FFFFFF'
+        ctx.textAlign = 'center'
+        ctx.font = '46px Arial'
+        ctx.fillText(`Credits!`, this.game.width / 2, this.game.height - 500)
+        ctx.font = '28px Arial'
+        
+        ctx.fillText(`Art Team`, this.game.width / 2, this.game.height - 450)
+        ctx.font = '20px Arial'
+        ctx.fillText(`Axel (ES23)`, this.game.width / 2, this.game.height - 420)
+        ctx.fillText(`Hilma (ES23)`, this.game.width / 2, this.game.height - 390)
+        
+        ctx.font = '28px Arial'
+        ctx.fillText(`Programming Team`, this.game.width / 2, this.game.height - 350)
+        ctx.font = '20px Arial'
+        ctx.fillText(`Rasmus (TE23)`, this.game.width / 2, this.game.height - 320)
+        ctx.fillText(`Oliver (TE23)`, this.game.width / 2, this.game.height - 290)
+        ctx.fillText(`Leo (TE23)`, this.game.width / 2, this.game.height - 260)
+
+        ctx.font = '28px Arial'
+        ctx.fillText(`Management`, this.game.width / 2, this.game.height - 220)
+        ctx.font = '20px Arial'
+        ctx.fillText(`Olle (TE4)`, this.game.width / 2, this.game.height - 190)
+        ctx.fillText(`Herman (TE4)`, this.game.width / 2, this.game.height - 160)
+
+        ctx.font = '16px Arial'
+        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 120)
         ctx.textAlign = 'left'
     }
 

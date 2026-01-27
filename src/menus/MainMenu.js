@@ -1,5 +1,5 @@
 import Menu from './Menu.js'
-import ControlsMenu from './ControlsMenu.js'
+import CreditsMenu from './CreditsMenu.js'
 
 export default class MainMenu extends Menu {
     getTitle() {
@@ -17,13 +17,14 @@ export default class MainMenu extends Menu {
                     this.game.inputHandler.keys.clear()
                 }
             },
-            /*{
-                text: 'Controls',
+            {
+                text: 'Credits',
                 key: 'c',
                 action: () => {
-                    this.game.currentMenu = new ControlsMenu(this.game)
+                    this.game.gameState = 'CREDITS'
+                    this.game.currentMenu = new CreditsMenu(this.game)
                 }
-            }*/
+            }
         ]
     }
 }

@@ -66,14 +66,34 @@ export default class TwinstickArena {
         const worldHeight = this.game.worldHeight
         
         this.enemySpawnPoints = [
-            // Övre vänster
+            // Vänster spawners
             { x: margin, y: margin },
-            // Övre höger
-            { x: worldWidth - margin, y: margin },
-            // Nedre vänster
+            { x: margin, y: margin * 2 },
+            { x: margin, y: margin * 3 },
+            { x: margin, y: margin * 4 },
+            { x: margin, y: margin * 5 },
+            { x: margin, y: margin * 6 },
             { x: margin, y: worldHeight - margin },
-            // Nedre höger
-            { x: worldWidth - margin, y: worldHeight - margin }
+            // Höger spawners
+            { x: worldWidth - margin, y: margin },
+            { x: worldWidth - margin, y: margin * 2 },
+            { x: worldWidth - margin, y: margin * 3 },
+            { x: worldWidth - margin, y: margin * 4 },
+            { x: worldWidth - margin, y: margin * 5 },
+            { x: worldWidth - margin, y: margin * 6 },
+            { x: worldWidth - margin, y: worldHeight - margin },
+            // Övre spawners
+            { x: margin * 3, y: margin },
+            { x: margin * 5, y: margin },
+            { x: margin * 7, y: margin },
+            { x: margin * 9, y: margin },
+            { x: margin * 11, y: margin },
+            // Nedre spawners
+            { x: margin * 3, y: worldHeight - margin },
+            { x: margin * 5, y: worldHeight - margin },
+            { x: margin * 7, y: worldHeight - margin },
+            { x: margin * 9, y: worldHeight - margin },
+            { x: margin * 11, y: worldHeight - margin },
         ]
     }
 
