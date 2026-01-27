@@ -171,6 +171,12 @@ export default class TwinstickGame extends GameBase {
             this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
             return
         }
+
+        if (this.gameState === 'TUTORIAL' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
+        }
                 
             // Kolla Escape för att öppna menyn under spel
         if (this.inputHandler.keys.has('Escape') && this.gameState === 'PLAYING') {
