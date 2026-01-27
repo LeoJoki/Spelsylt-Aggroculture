@@ -1,4 +1,3 @@
-// Basklass för alla objekt i spelet
 export default class GameObject {
     constructor(game, x = 0, y = 0, width = 0, height = 0) {
         this.game = game // referens till spelet
@@ -265,6 +264,9 @@ export default class GameObject {
             centerY = -this.height/2
         }
         
+        const renderWidth = this.width * scale
+        const renderHeight = this.height * scale
+
         ctx.save()
         if (flipHorizontal) {
             ctx.translate(screenX + renderWidth, screenY)

@@ -3,10 +3,9 @@ import Spot from "../assets/projectiles/testProjektile.png"
 import Johnidle from "../assets/player/johnidle.png"
 import Johnshoot from "../assets/player/johnshoot.png"
 import Johnwalk from "../assets/player/johnwalk.png"
-
-=========
-import Spot from "../assets/projectiles/testProjektile.png"
->>>>>>>>> Temporary merge branch 2
+import Johnidleleft from "../assets/player/johnidleleft.png"
+import Johnshootleft from "../assets/player/johnshootleft.png"
+import Johnwalkleft from "../assets/player/johnwalkleft.png"
 
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {
@@ -98,7 +97,20 @@ export default class TwinstickPlayer extends GameObject {
         }
 
         this.loadSprite("idle", Johnidle, JohnidleOptions)
-        this.currentAnimation = 'idle'
+
+        const JohnidleleftOptions = {
+            framesX: 6,
+            framesY: 1,
+            frameInterval: 150,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1.8
+        }
+
+        this.loadSprite("leftidle", Johnidleleft, JohnidleleftOptions)
+        this.currentAnimation = 'leftidle'
 
         const JohnwalkOptions = {
             framesX: 5,
@@ -111,8 +123,19 @@ export default class TwinstickPlayer extends GameObject {
             scale: 1.8
         }
         this.loadSprite("move", Johnwalk, JohnwalkOptions)
+
+        const JohnwalkleftOptions = {
+            framesX: 5,
+            framesY: 1,
+            frameInterval: 150,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1.8
+        }
+        this.loadSprite("leftmove", Johnwalkleft, JohnwalkleftOptions)
     }
-    
     /**
      * Derived property: Spelaren är invulnerable under dash ELLER efter skada
      */
@@ -140,7 +163,7 @@ export default class TwinstickPlayer extends GameObject {
             
             // Normal rörelse (endast när inte dashar)
             if (this.game.inputHandler.keys.has('a')) {
-                this.currentAnimation = 'move'
+                this.currentAnimation = 'leftmove'
                 this.velocityX = -this.moveSpeed * applyMult
                 this.directionX = -1
             } else if (this.game.inputHandler.keys.has('d')) {
@@ -156,6 +179,7 @@ export default class TwinstickPlayer extends GameObject {
                 this.currentAnimation = 'move'
                 this.velocityY = -this.moveSpeed * applyMult
                 this.directionY = -1
+            
             } else if (this.game.inputHandler.keys.has('s')) {
                 this.currentAnimation = 'move'
                 this.velocityY = this.moveSpeed * applyMult
