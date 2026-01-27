@@ -5,6 +5,9 @@ import Johnwalk from "../assets/player/johnwalk.png"
 
 import Spot from "../assets/projectiles/playerShot.png"
 
+import ShootSFX from "../assets/sounds/playerShoot.mp3"
+import StepSFX from "../assets/sounds/playerStep.mp3"
+
 export default class TwinstickPlayer extends GameObject {
     constructor(game, x, y, width, height, color) {
         super(game, x, y, width, height)
@@ -42,6 +45,7 @@ export default class TwinstickPlayer extends GameObject {
         this.damage = 2
 
         this.firing = false
+        this.committedAction = false
         this.unplanted = false
 
         this.spriteConfig = {
@@ -73,6 +77,13 @@ export default class TwinstickPlayer extends GameObject {
         this.dashDirectionY = 0
         this.lastMoveDirectionX = 0 // Spara senaste rörelseriktningen
         this.lastMoveDirectionY = 0
+
+        this.shootSFX = new Audio(ShootSFX)
+        this.shootSFX.volume = 0.5
+        this.shootSFX.preservesPitch = false
+
+        this.stepSFX = new Audio(StepSFX)
+        this.stepSFX.preservesPitch = false
         
         // Sprite animations - no assets loaded yet, will fallback to rectangle
         // TODO: Load sprite animations here when assets are ready
@@ -119,6 +130,7 @@ export default class TwinstickPlayer extends GameObject {
         this.loadSprite("move", Johnwalk, JohnwalkOptions)
 
         this.startTimer("shootingAnim",0)
+        this.startTimer("stepTimer",0)
     }
     
     /**
@@ -189,12 +201,21 @@ export default class TwinstickPlayer extends GameObject {
         if (this["shootingAnim"] == 0) {
             if (this.velocityX !== 0 || this.velocityY !== 0) {
                 this.setAnimation('move')
+                if (this["stepTimer"] == 0) {
+                    this.stepSFX.pause()
+                    this.stepSFX.currentTime = 0
+                    this.stepSFX.playbackRate = 0.85 + Math.random() * 0.3
+                    this.stepSFX.play()
+                    this.startTimer("stepTimer",500)
+                }
+                else {
+                    this.updateTimer("stepTimer",deltaTime)
+                }
             } else {
                 this.setAnimation('idle')
             }
         }
         else if (this["shootingAnim"]){
-            console.log("updating", this["shootingAnim"])
             this.updateTimer("shootingAnim", deltaTime)
         }
         
@@ -244,12 +265,14 @@ export default class TwinstickPlayer extends GameObject {
                     this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
                     this.game.seedHolding = null
                     this.game.ui.discardButton.visible = false
+                    this.committedAction = true
                 }
             }
             else if (this.game.uiButtonHovering && !this.firing) {
                 this.game.uiButtonHovering.activate()
+                this.committedAction = true
             }
-            else {
+            else if (!this.committedAction){
                 //Shooting
                 this.firing = true
                 this.shoot()
@@ -263,6 +286,7 @@ export default class TwinstickPlayer extends GameObject {
         }
         else if (!this.game.inputHandler.mouseButtons.has(0)) {
             this.firing = false
+            this.committedAction = false
         }
     }
     
@@ -338,7 +362,11 @@ export default class TwinstickPlayer extends GameObject {
         let angleSpread = (this.spread)/(this.burst-1)
         const radPerDeg = 0.0174532925
 
-        
+        //ändrar playbackrate lite för att göra ljudet icke repetitivt
+        this.shootSFX.pause()
+        this.shootSFX.currentTime = 0
+        this.shootSFX.playbackRate = 0.9 + Math.random() * 0.2
+        this.shootSFX.play()
 
         // config bestämmer värden på projektilen, som target, storlek, hastighet, m.m
         

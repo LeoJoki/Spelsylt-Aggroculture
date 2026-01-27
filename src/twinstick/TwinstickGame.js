@@ -7,7 +7,8 @@ import PlantSlot from "./PlantSlot.js"
 import SeedPicker from "./plants/SeedPicker.js"
 import MainMenu from "../menus/MainMenu.js"
 import GameOverMenu from "../menus/GameOverMenu.js"
-import UiButton from "../UiButton.js"
+
+import SeedGet from "../assets/sounds/seedGet2.mp3"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -510,6 +511,8 @@ export default class TwinstickGame extends GameBase {
         })
         if (!this.seedHolding) {
             this.seedHolding = this.seedPicker.getRandomSeed()
+            let getSFX = new Audio(SeedGet)
+            getSFX.play()
         }
     }
 }
