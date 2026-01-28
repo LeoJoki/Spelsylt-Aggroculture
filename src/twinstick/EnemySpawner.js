@@ -52,18 +52,28 @@ export default class EnemySpawner {
     
     //genererar hur många fiender waven ska ha och sedan genererar fiendernas typer
     waveGeneration() {
-        this.waveEnemies = 4 + (4 * (this.currentWave / 2))
+        if (this.currentWave == 2) {
+            this.currentWaveEnemies = ['medium', 'medium', 'small', 'small', 'small', 'small', 'small', 'small']
+        } else if (this.currentWave == 5) {
+            this.currentWaveEnemies = ['large', 'large', 'large', 'large', 'medium', 'medium', 'medium', 'medium', 'small', 'small', 'small', 'small', 'small', 'small']
+        } else if (this.currentWave == 7) {
+            this.currentWaveEnemies = ['boss', 'boss', 'large', 'large', 'large', 'large', 'large', 'medium', 'medium', 'medium', 'small', 'small', 'small', 'small', 'small', 'small', 'small', 'small']
+        }
+        
+        else {
+            this.waveEnemies = 4 + (4 * (this.currentWave / 2))
 
-        for (let i = 0; i < this.waveEnemies; i++){
-            this.enemyChoice = this.getRandomInt(6)
-            if (this.enemyChoice <= 0 && this.currentWave >= 7) {
-                this.currentWaveEnemies.push('boss')
-            } else if (this.enemyChoice == 1 && this.currentWave >= 5) {
-                this.currentWaveEnemies.push('large')
-            } else if (this.enemyChoice >= 2 && this.enemyChoice <= 3 && this.currentWave >= 2) {
-                this.currentWaveEnemies.push('medium')
-            } else {
-                this.currentWaveEnemies.push('small')
+            for (let i = 0; i < this.waveEnemies; i++){
+                this.enemyChoice = this.getRandomInt(6)
+                if (this.enemyChoice <= 0 && this.currentWave >= 7) {
+                    this.currentWaveEnemies.push('boss')
+                } else if (this.enemyChoice == 1 && this.currentWave >= 5) {
+                    this.currentWaveEnemies.push('large')
+                } else if (this.enemyChoice >= 2 && this.enemyChoice <= 3 && this.currentWave >= 2) {
+                    this.currentWaveEnemies.push('medium')
+                } else {
+                    this.currentWaveEnemies.push('small')
+                }
             }
         }
         console.log(this.currentWaveEnemies)

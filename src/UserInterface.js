@@ -303,7 +303,7 @@ export default class UserInterface {
         ctx.font = '28px Arial'
         ctx.fillText(`Press SPACE to start!`, this.game.width / 2, this.game.height - 450)
         ctx.fillText(`Press C for credits!`, this.game.width / 2, this.game.height - 410)
-        ctx.fillText(`Press V for a tutorial!`, this.game.width / 2, this.game.height - 370)
+        ctx.fillText(`Press V to learn how to play!`, this.game.width / 2, this.game.height - 370)
         ctx.textAlign = 'left'
     }
 
@@ -352,7 +352,7 @@ export default class UserInterface {
         ctx.font = '20px Arial'
         ctx.fillText(`WASD for movement`, this.game.width / 2, this.game.height - 420)
         ctx.fillText(`Mouse to aim and Left Click to shoot`, this.game.width / 2, this.game.height - 395)
-        ctx.fillText(`Space to dodge`, this.game.width / 2, this.game.height - 370)
+        ctx.fillText(`Space to dodge through bullets`, this.game.width / 2, this.game.height - 370)
         ctx.fillText(`After defeating a wave you get a seed!`, this.game.width / 2, this.game.height - 300)
         ctx.fillText(`Click on a dirt pile to plant the seed or click the trashcan to discard it.`, this.game.width / 2, this.game.height - 275)
         ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 250)
