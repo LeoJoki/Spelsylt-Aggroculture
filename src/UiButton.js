@@ -1,3 +1,4 @@
+import Camera from "./Camera";
 import GameObject from "./GameObject";
 
 
@@ -6,12 +7,36 @@ export default class UiButton extends GameObject {
         super(game, x, y, width, height)
         this.color = color
         this.visible = visible
+        this.sprite = null
+        this.hoverSprite = null
     }
 
     draw(ctx) {
         if (this.visible) {
-            ctx.fillStyle = this.color
-            ctx.fillRect(this.x,this.y,this.width,this.height)
+            const spriteOptions = {
+                framesX: 1,
+                framesY: 1,
+                frameInterval: 1000,
+                frameWidth: 32,
+                frameHeight: 32,
+                sourceX: 0,
+                sourceY: 0,
+                scale: 1
+            }
+            if (this === this.game.uiButtonHovering && this.hoverSprite) {
+                this.loadSprite("hover",this.hoverSprite,spriteOptions)
+                this.setAnimation("hover")
+                this.drawSprite(ctx)
+            }
+            else if (this.sprite) {
+                this.loadSprite("idle",this.sprite,spriteOptions)
+                this.setAnimation("idle")
+                this.drawSprite(ctx)
+            }
+            else {
+                ctx.fillStyle = this.color
+                ctx.fillRect(this.x,this.y,this.width,this.height)
+            }
         }
     }
 

@@ -1,6 +1,9 @@
 import GameObject from "../GameObject.js"
 import Spot from "../assets/plants/spot.png"
 
+import Planted from "../assets/sounds/planting.mp3"
+import Grown from "../assets/sounds/plantGrow.mp3"
+
 
 
 //Detta är ett objekt för den ruta där man kan plantera ett frö så att det kan bli till en växt
@@ -13,6 +16,8 @@ export default class PlantSlot extends GameObject {
         this.state = "unplanted"
         this.wavesTillGrown = 0
         this.plant = null
+        this.plantSFX = new Audio(Planted)
+        this.grownSFX = new Audio(Grown)
 
         //--- FORMAT FÖR ATT HÄMTA BILDER FRÅN "plants" inom "assets"
         //"../assets/plants/IMAGEFILENAME"
@@ -68,6 +73,8 @@ export default class PlantSlot extends GameObject {
         this.state = "growing"
         this.wavesTillGrown = plant.wavesTillGrown
 
+        this.plantSFX.play()
+
         plant.x = this.x
         plant.y = this.y
     }
@@ -89,6 +96,7 @@ export default class PlantSlot extends GameObject {
             this.wavesTillGrown -= 1
             if (this.wavesTillGrown <= 0) {
                 this.setAnimation("grown")
+                this.grownSFX.play()
 
                 this.state = "grown"
                 this.plant.applyBuff()

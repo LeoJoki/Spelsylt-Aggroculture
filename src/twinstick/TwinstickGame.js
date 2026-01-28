@@ -7,7 +7,8 @@ import PlantSlot from "./PlantSlot.js"
 import SeedPicker from "./plants/SeedPicker.js"
 import MainMenu from "../menus/MainMenu.js"
 import GameOverMenu from "../menus/GameOverMenu.js"
-import UiButton from "../UiButton.js"
+
+import SeedGet from "../assets/sounds/seedGet2.mp3"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -48,8 +49,8 @@ export default class TwinstickGame extends GameBase {
             this,
             arenaData.playerSpawnX,
             arenaData.playerSpawnY,
-            48,
-            48,
+            64,
+            64,
             'purple'
         )
 
@@ -116,7 +117,17 @@ export default class TwinstickGame extends GameBase {
 
         if (config.spriteConfig) {
             projectile.hasSprite = true
-            projectile.loadSprite("projectile",config.spriteConfig.imagePath,1,0,config.spriteConfig.width,config.spriteConfig.height)
+            const ProjectileOptions = {
+                framesX: 1,
+                framesY: 1,
+                frameInterval: 100,
+                frameWidth: config.spriteConfig.width,
+                frameHeight: config.spriteConfig.height,
+                sourceX: 0,
+                sourceY: 0,
+                scale: 1
+            }
+            projectile.loadSprite("projectile", config.spriteConfig.imagePath, ProjectileOptions)
             projectile.setAnimation("projectile")
             projectile.updateAnimation(0.01)
         }
@@ -167,6 +178,12 @@ export default class TwinstickGame extends GameBase {
         }
 
         if (this.gameState === 'CREDITS' && this.currentMenu) {
+            this.currentMenu.update(deltaTime)
+            this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+            return
+        }
+
+        if (this.gameState === 'TUTORIAL' && this.currentMenu) {
             this.currentMenu.update(deltaTime)
             this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
             return
@@ -289,6 +306,7 @@ export default class TwinstickGame extends GameBase {
             }
         })
         
+        let killedEnemies = []
         // Kolla kollision mellan spelarens projektiler och fiender
         this.projectiles.forEach(projectile => {
             this.enemies.forEach(enemy => {
@@ -296,10 +314,11 @@ export default class TwinstickGame extends GameBase {
                     let dead = enemy.takeDamage(this.player.damage)
                     projectile.markedForDeletion = true
 
-                    if (dead) {
+                    if (dead && !killedEnemies.includes(enemy)) {
                         // Notifiera spawner om fiende dödas
                         if (this.spawner) {
                             this.spawner.onEnemyKilled()
+                            killedEnemies.push(enemy)
                         }
                         
                         // Spawna ammo pickups baserat på fiendens health med flying effekt
@@ -498,6 +517,8 @@ export default class TwinstickGame extends GameBase {
         })
         if (!this.seedHolding) {
             this.seedHolding = this.seedPicker.getRandomSeed()
+            let getSFX = new Audio(SeedGet)
+            getSFX.play()
         }
     }
 }
