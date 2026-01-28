@@ -23,29 +23,29 @@ export default class BossEnemy extends TwinstickEnemy {
             speed: 0.15,
             width: 12,
             height: 12,
-            maxShootRange : 1600,
+            maxShootRange : 2500,
             spriteConfig : spriteConfig
         }
 
         super(game, x, y, 64, 64, {
             moveSpeed: 0.15,        // Normal hastighet
-            maxHealth: 8,        // Medel hälsa
+            maxHealth: 15,        // Medel hälsa
             shootCooldownDuration: 1000,
-            shootRange: 1500,
+            shootRange: 2500,
             projectileConfig : projectileConfig      // Normal räckvidd
         })
 
-        const GunflowerrunOptions = {
-            framesX: 4,
+        const PollinatorrunOptions = {
+            framesX: 3,
             framesY: 1,
-            frameInterval: 100,
-            frameWidth: 32,
-            frameHeight: 32,
+            frameInterval: 500,
+            frameWidth: 64,
+            frameHeight: 64,
             sourceX: 0,
-            sourceY: 32,
-            scale: 1
+            sourceY: 0,
+            scale: 1.2
         }
-        this.loadSprite("seek",Gunflowerrun, GunflowerrunOptions)
+        this.loadSprite("seek", Pollinatorrun, PollinatorrunOptions)
         this.setAnimation("seek")
         //fienden som slårdsaduiadbauo
         this.enemyType = 'small'
