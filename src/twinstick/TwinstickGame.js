@@ -520,5 +520,10 @@ export default class TwinstickGame extends GameBase {
             let getSFX = new Audio(SeedGet)
             getSFX.play()
         }
+        if (this.player.health < 10 && this.player.health > 4){
+            this.player.health += 1
+        } else if (this.player.health < 5) {
+            this.player.health += 2
+        }
     }
 }

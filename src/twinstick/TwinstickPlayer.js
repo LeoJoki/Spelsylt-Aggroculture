@@ -1,5 +1,4 @@
 import GameObject from "../GameObject.js"
-import Spot from "../assets/projectiles/testProjektile.png"
 import Johnidle from "../assets/player/johnidle.png"
 import Johnshoot from "../assets/player/johnshoot.png"
 import Johnwalk from "../assets/player/johnwalk.png"
@@ -31,7 +30,7 @@ export default class TwinstickPlayer extends GameObject {
         // Timers hanteras via GameObject.updateTimer() för konsistens
         
         // Health system
-        this.maxHealth = 5
+        this.maxHealth = 10
         this.health = this.maxHealth
         this.invulnerableTimer = 0
         this.invulnerableDuration = 1000
@@ -116,20 +115,7 @@ export default class TwinstickPlayer extends GameObject {
         }
 
         this.loadSprite("idle", Johnidle, JohnidleOptions)
-
-        const JohnidleleftOptions = {
-            framesX: 6,
-            framesY: 1,
-            frameInterval: 150,
-            frameWidth: 32,
-            frameHeight: 32,
-            sourceX: 0,
-            sourceY: 0,
-            scale: 1.8
-        }
-
-        this.loadSprite("leftidle", Johnidleleft, JohnidleleftOptions)
-        this.currentAnimation = 'leftidle'
+        this.currentAnimation = 'idle'
 
         const JohnwalkOptions = {
             framesX: 5,
@@ -187,7 +173,6 @@ export default class TwinstickPlayer extends GameObject {
             if (this.game.inputHandler.keys.has('w')) {
                 this.velocityY = -this.moveSpeed * applyMult
                 this.directionY = -1
-            
             } else if (this.game.inputHandler.keys.has('s')) {
                 this.velocityY = this.moveSpeed * applyMult
                 this.directionY = 1

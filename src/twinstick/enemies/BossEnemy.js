@@ -1,6 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
-import Biter from "../../assets/enemies/biter.png"
-
+import Pollinatorrun from "../../assets/enemies/pollinatorrun.png"
+import plantShot from "../../assets/projectiles/plantShot.png"
 
 /**
  * Boss fiende
@@ -11,17 +11,53 @@ import Biter from "../../assets/enemies/biter.png"
  */
 export default class BossEnemy extends TwinstickEnemy {
     constructor(game, x, y) {
+
+        let spriteConfig = {
+            imagePath: plantShot,
+            width: 4,
+            height: 4
+        }
+
+        let projectileConfig = {
+            target:"player",
+            speed: 0.15,
+            width: 12,
+            height: 12,
+            maxShootRange : 1600,
+            spriteConfig : spriteConfig
+        }
+
         super(game, x, y, 64, 64, {
-            color: '#FF00FF',      // Magenta
-            moveSpeed: 0.2,       // Ganska långsam
-            maxHealth: 20,         // Mycket hög hälsa
-            shootCooldownDuration: 500,  // Skjuter mycket ofta
-            shootRange: 1000        // Mycket lång räckvidd
+            moveSpeed: 0.15,        // Normal hastighet
+            maxHealth: 8,        // Medel hälsa
+            shootCooldownDuration: 1000,
+            shootRange: 1500,
+            projectileConfig : projectileConfig      // Normal räckvidd
         })
-        this.state = "idle"
-        this.loadSprite("idle",Biter,1,0,32,32)
-        this.setAnimation("idle")
-        //fienden som skjuter fast stor
-        this.enemyType = 'boss'
+
+        const GunflowerrunOptions = {
+            framesX: 4,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 32,
+            frameHeight: 32,
+            sourceX: 0,
+            sourceY: 32,
+            scale: 1
+        }
+        this.loadSprite("seek",Gunflowerrun, GunflowerrunOptions)
+        this.setAnimation("seek")
+        //fienden som slårdsaduiadbauo
+        this.enemyType = 'small'
+        
+    }
+
+    update(deltaTime){
+        super.update(deltaTime)
+        this.updateAnimation(deltaTime)
+    }
+
+    draw(ctx, camera) {
+        this.drawSprite(ctx, camera)
     }
 }
