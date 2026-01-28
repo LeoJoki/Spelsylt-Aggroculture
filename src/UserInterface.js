@@ -27,8 +27,10 @@ export default class UserInterface {
             this.drawWin(ctx)
         } else if (this.game.gameState === 'MENU') {
             this.drawMenu(ctx)
-        }else if (this.game.gameState === 'CREDITS') {
+        } else if (this.game.gameState === 'CREDITS') {
             this.drawCredits(ctx)
+        } else if (this.game.gameState === 'TUTORIAL') {
+            this.drawTutorial(ctx)
         }
     }
 
@@ -83,7 +85,7 @@ export default class UserInterface {
         ctx.restore()
         
         // Rita reload indicator ovanför spelaren (i world space)
-        if (this.game.player && this.game.player.isReloading) {
+        if (this.game.player && this.game.player.dashCooldown > 0) {
             this.drawReloadIndicator(ctx)
         }
     }
@@ -175,7 +177,7 @@ export default class UserInterface {
         const camera = this.game.camera
         
         // Beräkna position ovanför spelaren
-        const worldX = player.x + player.width / 2
+        const worldX = player.x + player.width / 1.2
         const worldY = player.y - 30
         const screenX = camera ? worldX - camera.x : worldX
         const screenY = camera ? worldY - camera.y : worldY
@@ -185,14 +187,14 @@ export default class UserInterface {
         // Reload progress bar
         const barWidth = 60
         const barHeight = 8
-        const reloadPercent = 1 - (player.reloadTimer / player.reloadDuration)
+        const reloadPercent = 1 - (player.dashCooldown / player.dashCooldownDuration)
         
         // Bakgrund
         ctx.fillStyle = '#333'
         ctx.fillRect(screenX - barWidth / 2, screenY, barWidth, barHeight)
         
         // Progress
-        ctx.fillStyle = '#FFC107'
+        ctx.fillStyle = '#969696'
         ctx.fillRect(screenX - barWidth / 2, screenY, barWidth * reloadPercent, barHeight)
         
         // Kant
@@ -201,10 +203,10 @@ export default class UserInterface {
         ctx.strokeRect(screenX - barWidth / 2, screenY, barWidth, barHeight)
         
         // Text under progress bar
-        ctx.font = '12px Arial'
+        /*ctx.font = '12px Arial'
         ctx.fillStyle = '#FFC107'
         ctx.textAlign = 'center'
-        ctx.fillText('RELOADING', screenX, screenY + barHeight + 14)
+        ctx.fillText('RELOADING', screenX, screenY + barHeight + 14)*/
         
         ctx.restore()
     }
@@ -301,6 +303,7 @@ export default class UserInterface {
         ctx.font = '28px Arial'
         ctx.fillText(`Press SPACE to start!`, this.game.width / 2, this.game.height - 450)
         ctx.fillText(`Press C for credits!`, this.game.width / 2, this.game.height - 410)
+        ctx.fillText(`Press V for a tutorial!`, this.game.width / 2, this.game.height - 370)
         ctx.textAlign = 'left'
     }
 
@@ -332,7 +335,31 @@ export default class UserInterface {
         ctx.fillText(`Herman (TE4)`, this.game.width / 2, this.game.height - 160)
 
         ctx.font = '16px Arial'
-        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 120)
+        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 130)
+        ctx.textAlign = 'left'
+    }
+
+    drawTutorial(ctx) {
+        ctx.fillStyle = '#008aa6'
+        ctx.fillRect(0, 0, this.game.width, this.game.height)
+        ctx.fillStyle = '#000000'
+        ctx.textAlign = 'center'
+        ctx.font = '46px Arial'
+        ctx.fillText(`Tutorial!`, this.game.width / 2, this.game.height - 500)
+        ctx.font = '28px Arial'
+        ctx.fillText(`Player:`, this.game.width / 2, this.game.height - 450)
+        ctx.fillText(`Planting:`, this.game.width / 2, this.game.height - 330)
+        ctx.font = '20px Arial'
+        ctx.fillText(`WASD for movement`, this.game.width / 2, this.game.height - 420)
+        ctx.fillText(`Mouse to aim and Left Click to shoot`, this.game.width / 2, this.game.height - 395)
+        ctx.fillText(`Space to dodge`, this.game.width / 2, this.game.height - 370)
+        ctx.fillText(`After defeating a wave you get a seed!`, this.game.width / 2, this.game.height - 300)
+        ctx.fillText(`Click on a dirt pile to plant the seed or click the red button to discard it.`, this.game.width / 2, this.game.height - 275)
+        ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 250)
+        ctx.fillText(`Fully grown plants will make you stronger!`, this.game.width / 2, this.game.height - 225)
+
+        ctx.font = '16px Arial'
+        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 200)
         ctx.textAlign = 'left'
     }
 

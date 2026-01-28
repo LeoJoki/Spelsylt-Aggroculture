@@ -72,7 +72,7 @@ export default class TwinstickPlayer extends GameObject {
         this.dashDuration = 150 // Millisekunder som dashen varar
         this.dashTimer = 0
         this.dashCooldown = 0
-        this.dashCooldownDuration = 500 // Millisekunder mellan dashes
+        this.dashCooldownDuration = 3000 // Millisekunder mellan dashes
         this.dashDirectionX = 0
         this.dashDirectionY = 0
         this.lastMoveDirectionX = 0 // Spara senaste rörelseriktningen
