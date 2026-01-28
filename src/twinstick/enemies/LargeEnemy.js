@@ -31,7 +31,7 @@ export default class LargeEnemy extends TwinstickEnemy {
             moveSpeed: 0.15,       // Långsam
             maxHealth: 15,          // Hög hälsa
             shootCooldownDuration: 1500,
-            shootRange: 100,    
+            shootRange: 150,    
             projectileConfig: projectileConfig    // Kort räckvidd     // Lång räckvidd
         })
 
