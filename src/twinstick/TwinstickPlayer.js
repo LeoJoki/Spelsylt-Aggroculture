@@ -30,7 +30,7 @@ export default class TwinstickPlayer extends GameObject {
         // Timers hanteras via GameObject.updateTimer() för konsistens
         
         // Health system
-        this.maxHealth = 5
+        this.maxHealth = 10
         this.health = this.maxHealth
         this.invulnerableTimer = 0
         this.invulnerableDuration = 1000
