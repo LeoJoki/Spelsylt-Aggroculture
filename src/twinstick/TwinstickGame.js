@@ -89,6 +89,7 @@ export default class TwinstickGame extends GameBase {
             projectile.markedForDeletion = true
         })
         this.score = 0
+        this.plantSlots = []
         this.init()
         this.gameState = 'PLAYING'
         this.currentMenu = null

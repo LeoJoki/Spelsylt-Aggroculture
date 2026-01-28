@@ -177,7 +177,7 @@ export default class UserInterface {
         const camera = this.game.camera
         
         // Beräkna position ovanför spelaren
-        const worldX = player.x + player.width / 1.2
+        const worldX = player.x + player.width / 1.9
         const worldY = player.y - 30
         const screenX = camera ? worldX - camera.x : worldX
         const screenY = camera ? worldY - camera.y : worldY
@@ -357,9 +357,10 @@ export default class UserInterface {
         ctx.fillText(`Click on a dirt pile to plant the seed or click the trashcan to discard it.`, this.game.width / 2, this.game.height - 275)
         ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 250)
         ctx.fillText(`Fully grown plants will make you stronger!`, this.game.width / 2, this.game.height - 225)
+        ctx.fillText(`Be careful though, Farmer John forgot his shovel in his barn so you can't replace plants.`, this.game.width / 2, this.game.height - 200)
 
         ctx.font = '16px Arial'
-        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 200)
+        ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 175)
         ctx.textAlign = 'left'
     }
 
