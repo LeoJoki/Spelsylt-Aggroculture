@@ -2,6 +2,8 @@ import TwinstickEnemy from "../TwinstickEnemy.js"
 import Pollinatorrun from "../../assets/enemies/pollinatorrun.png"
 import plantShot from "../../assets/projectiles/plantShot.png"
 
+import biteSFX from "../../assets/sounds/woosh.wav"
+
 /**
  * Boss fiende
  * - Mycket hög hälsa (10hp)
@@ -18,6 +20,10 @@ export default class BossEnemy extends TwinstickEnemy {
             height: 4
         }
 
+        let biteSound = new Audio(biteSFX)
+        biteSound.volume = 0.05
+        biteSound.preservesPitch = false
+
         let projectileConfig = {
             target:"player",
             speed: 0.15,
@@ -32,7 +38,8 @@ export default class BossEnemy extends TwinstickEnemy {
             maxHealth: 15,        // Medel hälsa
             shootCooldownDuration: 1000,
             shootRange: 2500,
-            projectileConfig : projectileConfig      // Normal räckvidd
+            projectileConfig : projectileConfig,
+            attackSound : biteSound     // Normal räckvidd
         })
 
         const PollinatorrunOptions = {

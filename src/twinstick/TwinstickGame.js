@@ -9,6 +9,7 @@ import MainMenu from "../menus/MainMenu.js"
 import GameOverMenu from "../menus/GameOverMenu.js"
 
 import SeedGet from "../assets/sounds/seedGet2.mp3"
+import Music from "../assets/sounds/Music.mp3"
 import AcidPuddle from "./enemies/AcidPuddle.js"
 
 export default class TwinstickGame extends GameBase {
@@ -40,12 +41,17 @@ export default class TwinstickGame extends GameBase {
         this.init()
 
         this.currentMenu = new MainMenu(this)
+        this.music = new Audio(Music)
+        this.music.volume = 0.1
     }
 
     init() {
         // Skapa arena
         this.arena = new TwinstickArena(this)
         const arenaData = this.arena.getData()
+
+        
+
         
         // Initiera spelobjekt som spelare, NPCs, items etc
         this.player = new TwinstickPlayer(
@@ -165,6 +171,7 @@ export default class TwinstickGame extends GameBase {
     }
     */
     update(deltaTime) {
+        this.music.play()
         // Uppdatera spel-logik varje frame
         const playerPrevX = this.player.x
         const playerPrevY = this.player.y

@@ -24,6 +24,7 @@ export default class TwinstickEnemy extends GameObject {
         this.shootCooldownDuration = config.shootCooldownDuration || 2000
         this.shootRange = config.shootRange || 300
         this.maxshootrange =  config.projectileConfig ? config.projectileConfig.maxshootrange || 800 : 800
+        this.attackSound = config.attackSound || null
         
         this.deathSFX = new Audio(EnemyDeath)
         this.deathSFX.preservesPitch = false
@@ -169,6 +170,11 @@ export default class TwinstickEnemy extends GameObject {
     }
     
     shoot() {
+        if (this.attackSound) {
+            this.attackSound.currentTime = 0
+            this.attackSound.playbackRate = 0.85 + Math.random() * 0.3
+            this.attackSound.play()
+        }
         const player = this.game.player
         
         // Beräkna riktning från fienden till spelaren

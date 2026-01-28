@@ -2,6 +2,8 @@ import TwinstickEnemy from "../TwinstickEnemy.js"
 import Gunflowerrun from "../../assets/enemies/gunflowerrun.png"
 import plantShot from "../../assets/projectiles/plantShot.png"
 
+import Shoot from "../../assets/sounds/flowerShoot.mp3"
+
 /**
  * Medium balanserad fiende
  * - Medel hälsa (3hp)
@@ -26,12 +28,17 @@ export default class MediumEnemy extends TwinstickEnemy {
             spriteConfig : spriteConfig
         }
 
+        let shootSound = new Audio(Shoot)
+        shootSound.volume = 0.25
+        shootSound.preservesPitch = false
+
         super(game, x, y, 64, 64, {
             moveSpeed: 0.15,        // Normal hastighet
             maxHealth: 3,          // Medel hälsa
             shootCooldownDuration: 900,
             shootRange: 500,
-            projectileConfig : projectileConfig      // Normal räckvidd
+            projectileConfig : projectileConfig,
+            attackSound : shootSound     // Normal räckvidd
         })
 
         const GunflowerrunOptions = {
