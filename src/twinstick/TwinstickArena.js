@@ -3,6 +3,8 @@ import Platform from '../Platform.js'
 import Field from "../assets/plants/field.png"
 import Grass from "../assets/plants/grass.png"
 import Barn from "../assets/player/barn.png"
+import Forest from "../assets/player/forest.png"
+
 
 /**
  * Arena för twinstick shooter
@@ -48,6 +50,20 @@ export default class TwinstickArena {
         
         // Skapa arena
         this.init()
+        this.forest = new GameObject(this.game,0,0,this.game.width * 1.5, this.game.height * 1.5)
+        const ForestOptions = {
+            framesX: 1,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 2000,
+            frameHeight: 1212,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+        this.forest.loadSprite("idle", Forest, ForestOptions)
+        this.forest.setAnimation("idle")
+
     }
 
     init() {
@@ -154,7 +170,7 @@ export default class TwinstickArena {
             image: Barn,
             options: barnOptions
         }
-        
+
         // Block 1 - övre vänster kvadrant
         this.walls.push(new Platform(
             this.game,
@@ -163,7 +179,7 @@ export default class TwinstickArena {
             blockSize,
             blockSize,
             blockColor,
-            barnConfig
+            barnConfig,
         ))
         /*
         // Block 2 - nedre höger kvadrant (diagonal)
@@ -207,6 +223,7 @@ export default class TwinstickArena {
             //ctx.fillStyle = tile.color
             //ctx.fillRect(screenX, screenY, tile.width, tile.height)
         })
+        
 
         this.field.drawSprite(ctx,camera)
         
@@ -214,6 +231,8 @@ export default class TwinstickArena {
         this.walls.forEach(wall => {
             wall.draw(ctx, camera)
         })
+        this.forest.drawSprite(ctx,camera)
+
     }
 
     getData() {
