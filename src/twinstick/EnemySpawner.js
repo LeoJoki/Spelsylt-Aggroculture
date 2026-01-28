@@ -63,7 +63,7 @@ export default class EnemySpawner {
             } else if (this.enemyChoice >= 2 && this.enemyChoice <= 3 && this.currentWave >= 2) {
                 this.currentWaveEnemies.push('medium')
             } else {
-                this.currentWaveEnemies.push('boss')
+                this.currentWaveEnemies.push('small')
             }
         }
         console.log(this.currentWaveEnemies)

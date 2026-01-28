@@ -179,6 +179,36 @@ export default class TwinstickGame extends GameBase {
         if (this.gameState === 'MENU' && this.currentMenu) {
             this.currentMenu.update(deltaTime)
             this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+
+            let hoveringUI = false
+
+            this.ui.menuButtons.forEach(button => {
+                const other = {
+                    x : this.inputHandler.mouseX,
+                    y : this.inputHandler.mouseY,
+                    width : 0,
+                    height : 0
+                }
+
+                if (button.intersectsMouse(other) && button.visible) {
+                    hoveringUI = true
+                    if (button != this.uiButtonHovering) {
+                        this.uiButtonHovering = button
+
+                        console.log("hovering new button!")
+                    }
+                }
+            })
+
+            console.log(this.inputHandler.mouseButtons)
+            if (this.inputHandler.mouseButtons.has(0) && this.uiButtonHovering) {
+                this.uiButtonHovering.activate()
+            }
+
+            if (!hoveringUI && this.uiButtonHovering) {
+                this.uiButtonHovering = null
+            }
+
             return
         }
 

@@ -9,6 +9,9 @@ export default class UiButton extends GameObject {
         this.visible = visible
         this.sprite = null
         this.hoverSprite = null
+
+        this.frameWidth = 32
+        this.frameHeight = 32
     }
 
     draw(ctx) {
@@ -17,8 +20,8 @@ export default class UiButton extends GameObject {
                 framesX: 1,
                 framesY: 1,
                 frameInterval: 1000,
-                frameWidth: 32,
-                frameHeight: 32,
+                frameWidth: this.frameWidth,
+                frameHeight: this.frameHeight,
                 sourceX: 0,
                 sourceY: 0,
                 scale: 1
