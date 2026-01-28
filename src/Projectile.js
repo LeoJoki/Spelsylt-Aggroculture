@@ -11,6 +11,7 @@ export default class Projectile extends GameObject {
         this.maxDistance = maxDistance // Max en skärm långt
         this.color = 'orange'
         this.hasSprite = false
+        this.spawnAcid = false
     }
     
     update(deltaTime) {
@@ -23,6 +24,9 @@ export default class Projectile extends GameObject {
         const dy = this.y - this.startY
         const distanceTraveled = Math.sqrt(dx * dx + dy * dy)
         if (distanceTraveled > this.maxDistance) {
+            if (this.spawnAcid) {
+                this.game.addAcidPuddle(this.x,this.y,60,60)
+            }
             this.markedForDeletion = true
         }
     }
