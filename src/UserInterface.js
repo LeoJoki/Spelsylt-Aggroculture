@@ -2,6 +2,11 @@ import DiscardButton from "./DiscardButton"
 import GameObject from "./GameObject"
 import UiButton from "./UiButton"
 
+import titleScreen from "./assets/player/titleScreen.png"
+import title from "./assets/player/titel.png"
+import StartButton from "./StartButton"
+import TutorialButton from "./TutorialButton"
+
 export default class UserInterface {
     constructor(game) {
         this.game = game
@@ -10,10 +15,25 @@ export default class UserInterface {
         this.textColor = '#FFFFFF'
         this.shadowColor = '#000000'
 
+        this.titleScreenImage = new Image()
+        this.titleScreenImage.src = titleScreen
+
+        this.titleImage = new Image()
+        this.titleImage.src = title
+
+
+
         this.uiButtons = []
+
+        this.menuButtons = []
+
+        this.startButton = new StartButton(game,game.width/2 - 100,250,200,100,"red",true)
+        this.tutorialButton = new TutorialButton(game,game.width/2 - 100,400,200,100,"red",true)
 
         this.discardButton = new DiscardButton(game,game.width - 400, game.height - 100, 64, 64, "red")
         this.uiButtons.push(this.discardButton)
+        this.menuButtons.push(this.startButton)
+        this.menuButtons.push(this.tutorialButton)
     }
 
     draw(ctx) {
@@ -90,11 +110,6 @@ export default class UserInterface {
         }
     }
 
-    drawUiButtons(ctx) {
-        this.uiButtons.forEach(button => {
-            button.draw(ctx)
-        })
-    }
 
     drawHealthHearts(ctx, x, y) {
         const heartSize = 24
@@ -294,16 +309,39 @@ export default class UserInterface {
     }
 
     drawMenu(ctx) {
-        ctx.fillStyle = '#087509'
-        ctx.fillRect(0, 0, this.game.width, this.game.height)
-        ctx.fillStyle = '#000000'
-        ctx.textAlign = 'center'
-        ctx.font = '46px Arial'
-        ctx.fillText(`AGGROCULTURE!`, this.game.width / 2, this.game.height - 500)
+        ctx.drawImage(
+            this.titleScreenImage,
+            0,
+            0,
+            1920,
+            1080,
+            0,
+            0,
+            this.game.width,
+            this.game.height
+        )
+
+        ctx.drawImage(
+            this.titleImage,
+            0,
+            0,
+            4092,
+            1014,
+            150,
+            50,
+            this.game.width - 350,
+            this.game.height/3
+        )
+
+        this.drawMenuButtons(ctx)
+
+        
         ctx.font = '28px Arial'
-        ctx.fillText(`Press SPACE to start!`, this.game.width / 2, this.game.height - 450)
-        ctx.fillText(`Press C for credits!`, this.game.width / 2, this.game.height - 410)
-        ctx.fillText(`Press V to learn how to play!`, this.game.width / 2, this.game.height - 370)
+        ctx.textAlign = "center"
+        ctx.fillStyle = '#FFFFFF'
+
+        ctx.fillText(`Press C for credits!`, this.game.width / 2, this.game.height - 50)
+
         ctx.textAlign = 'left'
     }
 
@@ -362,6 +400,18 @@ export default class UserInterface {
         ctx.font = '16px Arial'
         ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 175)
         ctx.textAlign = 'left'
+    }
+
+    drawUiButtons(ctx) {
+        this.uiButtons.forEach(button => {
+            button.draw(ctx)
+        })
+    }
+
+    drawMenuButtons(ctx) {
+        this.menuButtons.forEach(button => {
+            button.draw(ctx)
+        })
     }
 
     drawSeedHolding(ctx) {

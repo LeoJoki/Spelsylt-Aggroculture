@@ -2,6 +2,8 @@ import TwinstickEnemy from "../TwinstickEnemy.js"
 import Pitcherrun from "../../assets/enemies/pitcherrun.png"
 import plantShot from "../../assets/projectiles/acidBlob.png"
 
+import biteSFX from "../../assets/sounds/acid.mp3"
+
 /**
  * Stor långsam fiende
  * - Hög hälsa (5hp)
@@ -15,6 +17,10 @@ export default class LargeEnemy extends TwinstickEnemy {
             width: 4,
             height: 4
         }
+
+        let biteSound = new Audio(biteSFX)
+        biteSound.volume = 0.15
+        biteSound.preservesPitch = false
 
         let projectileConfig = {
             target:"player",
@@ -32,7 +38,8 @@ export default class LargeEnemy extends TwinstickEnemy {
             maxHealth: 15,          // Hög hälsa
             shootCooldownDuration: 1500,
             shootRange: 150,    
-            projectileConfig: projectileConfig    // Kort räckvidd     // Lång räckvidd
+            projectileConfig: projectileConfig,
+            attackSound : biteSound  // Kort räckvidd     // Lång räckvidd
         })
 
         const PitcherrunOptions = {

@@ -3,6 +3,8 @@ import Biter from "../../assets/enemies/biter.png"
 import Biterrun from "../../assets/enemies/biterrun.png"
 import Biterbiting from "../../assets/enemies/biterbiting.png"
 
+import biteSFX from "../../assets/sounds/bite.mp3"
+
 /**
  * Liten snabb fiende
  * - Låg hälsa (2hp)
@@ -25,6 +27,9 @@ export default class SmallEnemy extends TwinstickEnemy {
             maxShootRange: 15,
         }
 
+        let biteSound = new Audio(biteSFX)
+        biteSound.volume = 0.15
+        biteSound.preservesPitch = false
 
         super(game, x, y, 48, 48, {
             moveSpeed: 0.25,       // Snabbare än normalt
@@ -32,6 +37,7 @@ export default class SmallEnemy extends TwinstickEnemy {
             shootCooldownDuration: 1000,
             shootRange: 20,        // Kort räckvidd
             projectileConfig: projectileConfig,
+            attackSound: biteSound
         })
 
         const BiterrunOptions = {

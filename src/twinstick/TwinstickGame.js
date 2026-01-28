@@ -9,6 +9,7 @@ import MainMenu from "../menus/MainMenu.js"
 import GameOverMenu from "../menus/GameOverMenu.js"
 
 import SeedGet from "../assets/sounds/seedGet2.mp3"
+import Music from "../assets/sounds/Music.mp3"
 import AcidPuddle from "./enemies/AcidPuddle.js"
 
 export default class TwinstickGame extends GameBase {
@@ -40,12 +41,17 @@ export default class TwinstickGame extends GameBase {
         this.init()
 
         this.currentMenu = new MainMenu(this)
+        this.music = new Audio(Music)
+        this.music.volume = 0.1
     }
 
     init() {
         // Skapa arena
         this.arena = new TwinstickArena(this)
         const arenaData = this.arena.getData()
+
+        
+
         
         // Initiera spelobjekt som spelare, NPCs, items etc
         this.player = new TwinstickPlayer(
@@ -165,6 +171,7 @@ export default class TwinstickGame extends GameBase {
     }
     */
     update(deltaTime) {
+        this.music.play()
         // Uppdatera spel-logik varje frame
         const playerPrevX = this.player.x
         const playerPrevY = this.player.y
@@ -172,6 +179,36 @@ export default class TwinstickGame extends GameBase {
         if (this.gameState === 'MENU' && this.currentMenu) {
             this.currentMenu.update(deltaTime)
             this.inputHandler.keys.clear() // Rensa keys så de inte läcker till spelet
+
+            let hoveringUI = false
+
+            this.ui.menuButtons.forEach(button => {
+                const other = {
+                    x : this.inputHandler.mouseX,
+                    y : this.inputHandler.mouseY,
+                    width : 0,
+                    height : 0
+                }
+
+                if (button.intersectsMouse(other) && button.visible) {
+                    hoveringUI = true
+                    if (button != this.uiButtonHovering) {
+                        this.uiButtonHovering = button
+
+                        console.log("hovering new button!")
+                    }
+                }
+            })
+
+            console.log(this.inputHandler.mouseButtons)
+            if (this.inputHandler.mouseButtons.has(0) && this.uiButtonHovering) {
+                this.uiButtonHovering.activate()
+            }
+
+            if (!hoveringUI && this.uiButtonHovering) {
+                this.uiButtonHovering = null
+            }
+
             return
         }
 
