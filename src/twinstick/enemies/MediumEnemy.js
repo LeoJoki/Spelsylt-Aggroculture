@@ -21,7 +21,7 @@ export default class MediumEnemy extends TwinstickEnemy {
 
         let projectileConfig = {
             target:"player",
-            speed: 0.35,
+            speed: 0.30,
             width: 12,
             height: 12,
             maxShootRange : 800,
@@ -35,7 +35,7 @@ export default class MediumEnemy extends TwinstickEnemy {
         super(game, x, y, 64, 64, {
             moveSpeed: 0.15,        // Normal hastighet
             maxHealth: 3,          // Medel hälsa
-            shootCooldownDuration: 900,
+            shootCooldownDuration: 1500,
             shootRange: 500,
             projectileConfig : projectileConfig,
             attackSound : shootSound     // Normal räckvidd
