@@ -1,6 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
 import Pitcherrun from "../../assets/enemies/pitcherrun.png"
-
+import plantShot from "../../assets/projectiles/acidBlob.png"
 
 /**
  * Stor långsam fiende
@@ -10,14 +10,31 @@ import Pitcherrun from "../../assets/enemies/pitcherrun.png"
  */
 export default class LargeEnemy extends TwinstickEnemy {
     constructor(game, x, y) {
-        super(game, x, y, 64, 64, {
+        let spriteConfig = {
+            imagePath: plantShot,
+            width: 4,
+            height: 4
+        }
+
+        let projectileConfig = {
+            target:"player",
+            speed: 0.15,
+            width: 20,
+            height: 20,
+            maxShootRange : 100,
+            spriteConfig : spriteConfig,
+            spawnAcid : true
+        }
+
+        super(game, x, y, 80, 80, {
             color: '#8B4513',      // Brun
-            moveSpeed: 0.2,       // Långsam
+            moveSpeed: 0.15,       // Långsam
             maxHealth: 15,          // Hög hälsa
-            shootCooldownDuration: 1000,
-            shootRange: 45,        // Kort räckvidd
-            maxshootrange: 60      // Lång räckvidd
+            shootCooldownDuration: 1500,
+            shootRange: 100,    
+            projectileConfig: projectileConfig    // Kort räckvidd     // Lång räckvidd
         })
+
         const PitcherrunOptions = {
             framesX: 4,
             framesY: 1,

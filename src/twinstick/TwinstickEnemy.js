@@ -14,7 +14,7 @@ import EnemyHit from "../assets/sounds/EnemyHit.mp3"
  */
 export default class TwinstickEnemy extends GameObject {
     constructor(game, x, y, width, height, config = {}) {
-        super(game, x, y, width, height)
+        super(game, x - width/2, y - height/2, width, height)
         
         // Konfigurerbara properties (måste sättas av subklass eller config)
 
@@ -192,7 +192,6 @@ export default class TwinstickEnemy extends GameObject {
     takeDamage(amount) {
         this.health -= amount
 
-        this.hitSFX.pause()
         this.hitSFX.currentTime = 0
         this.hitSFX.playbackRate = 0.9 + Math.random() * 0.2
         this.hitSFX.play()

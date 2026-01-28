@@ -354,9 +354,10 @@ export default class UserInterface {
         ctx.fillText(`Mouse to aim and Left Click to shoot`, this.game.width / 2, this.game.height - 395)
         ctx.fillText(`Space to dodge`, this.game.width / 2, this.game.height - 370)
         ctx.fillText(`After defeating a wave you get a seed!`, this.game.width / 2, this.game.height - 300)
-        ctx.fillText(`Click on a dirt pile to plant the seed or click the red button to discard it.`, this.game.width / 2, this.game.height - 275)
-        ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 250)
-        ctx.fillText(`Fully grown plants will make you stronger!`, this.game.width / 2, this.game.height - 225)
+        ctx.fillText(`Click on a dirt pile to plant the seed or click the trashcan to discard it.`, this.game.width / 2, this.game.height - 275)
+        ctx.fillText(`If you're unhappy with a plant you can always remove it by hovering it and then pressing T.`, this.game.width / 2, this.game.height - 250)
+        ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 225)
+        ctx.fillText(`Fully grown plants will make you stronger!`, this.game.width / 2, this.game.height - 200)
 
         ctx.font = '16px Arial'
         ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 200)

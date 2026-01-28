@@ -363,7 +363,6 @@ export default class TwinstickPlayer extends GameObject {
         const radPerDeg = 0.0174532925
 
         //ändrar playbackrate lite för att göra ljudet icke repetitivt
-        this.shootSFX.pause()
         this.shootSFX.currentTime = 0
         this.shootSFX.playbackRate = 0.9 + Math.random() * 0.2
         this.shootSFX.play()

@@ -9,6 +9,7 @@ import MainMenu from "../menus/MainMenu.js"
 import GameOverMenu from "../menus/GameOverMenu.js"
 
 import SeedGet from "../assets/sounds/seedGet2.mp3"
+import AcidPuddle from "./enemies/AcidPuddle.js"
 
 export default class TwinstickGame extends GameBase {
     constructor(canvas) {
@@ -33,6 +34,8 @@ export default class TwinstickGame extends GameBase {
         this.seedHolding = null
         this.seedPicker = new SeedPicker(this)
         this.hoveringPlantSlot = null
+
+        this.puddles = []
 
         this.init()
 
@@ -114,6 +117,8 @@ export default class TwinstickGame extends GameBase {
         projectile.speed = config.speed ? config.speed : 0.6 // Twinstick är snabbare än platformer
         projectile.width = config.width ? config.width : 8
         projectile.height = config.height ? config.height : 8
+        projectile.maxDistance = config.maxShootRange ? config.maxShootRange : 800
+        projectile.spawnAcid = config.spawnAcid || false
 
         if (config.spriteConfig) {
             projectile.hasSprite = true
@@ -143,6 +148,10 @@ export default class TwinstickGame extends GameBase {
         
     }
     
+    addAcidPuddle(x,y,width,height) {
+        let newPuddle = new AcidPuddle(this, x, y, width, height)
+        this.puddles.push(newPuddle)
+    }
     /*
     addEnemyProjectile(x, y, directionX, directionY, maxshootrange) {
         // Skapa fiendens projektil
@@ -255,6 +264,17 @@ export default class TwinstickGame extends GameBase {
                 }
             })
         })
+
+        this.puddles.forEach(puddle => {
+            puddle.update(deltaTime)
+
+            if (puddle.intersects(this.player) && puddle.active && puddle.canHurt) {
+                puddle.hurtPlayer(this.player)
+            }
+        })
+
+        this.puddles = this.puddles.filter(p => !p.markedForDeletion)
+
         
         // Ta bort markerade projektiler
         this.projectiles = this.projectiles.filter(p => !p.markedForDeletion)
@@ -295,12 +315,18 @@ export default class TwinstickGame extends GameBase {
             arenaData.walls.forEach(wall => {
                 if (projectile.intersects(wall)) {
                     projectile.markedForDeletion = true
+                    if (projectile.spawnAcid) {
+                        this.addAcidPuddle(projectile.x,projectile.y,60,60)
+                    }
                 }
             })
 
             if (projectile.intersects(this.player)){
                 if (!this.player.isInvulnerable) {
                     this.player.takeDamage(1)
+                }
+                if (projectile.spawnAcid) {
+                    this.addAcidPuddle(projectile.x,projectile.y,60,60)
                 }
                 projectile.markedForDeletion = true
             }
@@ -450,6 +476,10 @@ export default class TwinstickGame extends GameBase {
         this.plantSlots.forEach(plantSlot => {
             plantSlot.draw(ctx, this.camera)
         })
+
+        this.puddles.forEach(puddle => {
+            puddle.draw(ctx, this.camera)
+        })
         
         // Rita spelvärlden och objekt
         this.player.draw(ctx, this.camera)
@@ -468,6 +498,8 @@ export default class TwinstickGame extends GameBase {
         this.enemyProjectiles.forEach(projectile => {
             projectile.draw(ctx, this.camera)
         })
+
+        
 
 
         
