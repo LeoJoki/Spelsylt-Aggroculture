@@ -2,7 +2,6 @@ import SmallEnemy from "./enemies/SmallEnemy.js"
 import MediumEnemy from "./enemies/MediumEnemy.js"
 import LargeEnemy from "./enemies/LargeEnemy.js"
 import BossEnemy from "./enemies/BossEnemy.js"
-import AmmoPickup from "./AmmoPickup.js"
 
 /**
  * Hanterar spawning av fiender i waves
@@ -57,9 +56,11 @@ export default class EnemySpawner {
 
         for (let i = 0; i < this.waveEnemies; i++){
             this.enemyChoice = this.getRandomInt(6)
-            if (this.enemyChoice <= 0 && this.currentWave >= 5) {
+            if (this.enemyChoice <= 0 && this.currentWave >= 7) {
+                this.currentWaveEnemies.push('boss')
+            } else if (this.enemyChoice == 1 && this.currentWave >= 5) {
                 this.currentWaveEnemies.push('large')
-            } else if (this.enemyChoice >= 1 && this.enemyChoice <= 2 && this.currentWave >= 2) {
+            } else if (this.enemyChoice >= 2 && this.enemyChoice <= 3 && this.currentWave >= 2) {
                 this.currentWaveEnemies.push('medium')
             } else {
                 this.currentWaveEnemies.push('small')
