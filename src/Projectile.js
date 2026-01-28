@@ -34,10 +34,7 @@ export default class Projectile extends GameObject {
         
         // Rita projektilen som en avlång rektangel
 
-
         let rotation = Math.atan2(this.directionY,this.directionX)
-
-
 
         if (this.hasSprite) {
             this.drawSprite(ctx,camera, false, rotation + Math.PI/2, true)

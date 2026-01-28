@@ -1,5 +1,6 @@
 import TwinstickEnemy from "../TwinstickEnemy.js"
 import Gunflowerrun from "../../assets/enemies/gunflowerrun.png"
+import plantShot from "../../assets/projectiles/plantShot.png"
 
 /**
  * Medium balanserad fiende
@@ -9,11 +10,28 @@ import Gunflowerrun from "../../assets/enemies/gunflowerrun.png"
  */
 export default class MediumEnemy extends TwinstickEnemy {
     constructor(game, x, y) {
-        super(game, x, y, 32, 32, {
+
+        let spriteConfig = {
+            imagePath: plantShot,
+            width: 4,
+            height: 4
+        }
+
+        let projectileConfig = {
+            target:"player",
+            speed: 0.35,
+            width: 12,
+            height: 12,
+            maxShootRange : 800,
+            spriteConfig : spriteConfig
+        }
+
+        super(game, x, y, 64, 64, {
             moveSpeed: 0.15,        // Normal hastighet
             maxHealth: 3,          // Medel hälsa
             shootCooldownDuration: 900,
-            shootRange: 500        // Normal räckvidd
+            shootRange: 500,
+            projectileConfig : projectileConfig      // Normal räckvidd
         })
 
         const GunflowerrunOptions = {
@@ -24,7 +42,7 @@ export default class MediumEnemy extends TwinstickEnemy {
             frameHeight: 32,
             sourceX: 0,
             sourceY: 32,
-            scale: 1.4
+            scale: 1
         }
         this.loadSprite("seek",Gunflowerrun, GunflowerrunOptions)
         this.setAnimation("seek")

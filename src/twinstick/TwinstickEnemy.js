@@ -1,4 +1,6 @@
 import GameObject from "../GameObject.js"
+import EnemyDeath from "../assets/sounds/EnemyDeath.mp3"
+import EnemyHit from "../assets/sounds/EnemyHit.mp3"
 
 /**
  * Abstrakt basklass för alla twinstick fiender
@@ -23,6 +25,13 @@ export default class TwinstickEnemy extends GameObject {
         this.shootRange = config.shootRange || 300
         this.maxshootrange =  config.projectileConfig ? config.projectileConfig.maxshootrange || 800 : 800
         
+        this.deathSFX = new Audio(EnemyDeath)
+        this.deathSFX.preservesPitch = false
+
+        this.hitSFX = new Audio(EnemyHit)
+        this.hitSFX.volume = 1
+        this.hitSFX.preservesPitch = false
+
         // Gemensamma properties
         this.velocityX = 0
         this.velocityY = 0
@@ -182,7 +191,14 @@ export default class TwinstickEnemy extends GameObject {
     
     takeDamage(amount) {
         this.health -= amount
-        if (this.health <= 0) {
+
+        this.hitSFX.pause()
+        this.hitSFX.currentTime = 0
+        this.hitSFX.playbackRate = 0.9 + Math.random() * 0.2
+        this.hitSFX.play()
+
+        if (this.health <= 0 && !this.markedForDeletion) {
+            this.deathSFX.play()
             this.markedForDeletion = true
             // Lägg till poäng när fiende dör
             this.game.score += 100

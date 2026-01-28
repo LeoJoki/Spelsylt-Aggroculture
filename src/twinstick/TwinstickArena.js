@@ -33,7 +33,17 @@ export default class TwinstickArena {
         this.fieldPositionY = (this.game.worldHeight - this.fieldScale) / 2
 
         this.field = new GameObject(this.game,this.fieldPositionX,this.fieldPositionY,this.fieldScale,this.fieldScale)
-        this.field.loadSprite("idle",Field,1,0,96,96)
+        const fieldOptions = {
+            framesX: 1,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 96,
+            frameHeight: 96,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+        this.field.loadSprite("idle",Field,fieldOptions)
         this.field.setAnimation("idle")
         
         // Skapa arena
@@ -144,6 +154,22 @@ export default class TwinstickArena {
         // Två block i diagonal för visuell feedback när man rör sig
         const blockSize = this.tileSize * 3
         const blockColor = '#801313'
+
+        const barnOptions = {
+            framesX: 1,
+            framesY: 1,
+            frameInterval: 100,
+            frameWidth: 96,
+            frameHeight: 96,
+            sourceX: 0,
+            sourceY: 0,
+            scale: 1
+        }
+
+        const barnConfig = {
+            image: Barn,
+            options: barnOptions
+        }
         
         // Block 1 - övre vänster kvadrant
         this.walls.push(new Platform(
@@ -152,7 +178,8 @@ export default class TwinstickArena {
             worldHeight / 4.75,
             blockSize,
             blockSize,
-            blockColor
+            blockColor,
+            barnConfig
         ))
         /*
         // Block 2 - nedre höger kvadrant (diagonal)
