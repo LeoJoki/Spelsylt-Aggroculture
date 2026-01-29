@@ -57,15 +57,6 @@ export default class TwinstickPlayer extends GameObject {
 
         this.projectileSpeed = 0.8
         this.projectileSize = 20
-
-        
-        // Ammo system
-        /*this.maxAmmo = 8 // Skott per magasin
-        this.currentAmmo = this.maxAmmo
-        this.reserveAmmo = 60 // Total reserv-ammo
-        this.isReloading = false
-        this.reloadTimer = 0
-        this.reloadDuration = 1500 // Millisekunder att ladda om*/
         
         // Dash system
         this.isDashing = false
@@ -229,28 +220,11 @@ export default class TwinstickPlayer extends GameObject {
         this.updateTimer('dashCooldown', deltaTime)
         this.updateTimer('invulnerableTimer', deltaTime)
         
-        // Hantera reload
-        /*if (this.isReloading) {
-            if (this.updateTimer('reloadTimer', deltaTime)) {
-                this.finishReload()
-            }
-        }*/
-        
         // Aktivera dash med space-tangent
         if (this.game.inputHandler.keys.has(' ') && !this.isDashing && this.dashCooldown <= 0) {
             this.startDash()
         }
         
-        // Starta reload med 'r'-tangent
-        /*if (this.game.inputHandler.keys.has('r') && !this.isReloading && this.currentAmmo < this.maxAmmo && this.reserveAmmo > 0) {
-            this.startReload()
-        }*/
-        
-        // Auto-reload när magasinet är tomt
-       /* if (this.currentAmmo === 0 && !this.isReloading && this.reserveAmmo > 0) {
-            this.startReload()
-        }
-        */
         if (this.game.inputHandler.keys.has("t") && this.game.hoveringPlantSlot && this.unplanted == false){
             this.game.hoveringPlantSlot.removePlant()
             this.unplanted = true
@@ -325,31 +299,6 @@ export default class TwinstickPlayer extends GameObject {
         // Note: invulnerability hanteras via isInvulnerable getter (isDashing === true)
     }
     
-    /*startReload() {
-        this.isReloading = true
-        this.startTimer('reloadTimer', this.reloadDuration)
-        console.log('Reloading...')
-    }
-    
-    finishReload() {
-        // Beräkna hur många skott som behövs för att fylla magasinet
-        const ammoNeeded = this.maxAmmo - this.currentAmmo
-        const ammoToReload = Math.min(ammoNeeded, this.reserveAmmo)
-        
-        // Fyll på magasinet från reserven
-        this.currentAmmo += ammoToReload
-        this.reserveAmmo -= ammoToReload
-        
-        this.isReloading = false
-        console.log(`Reload complete! Ammo: ${this.currentAmmo}/${this.maxAmmo} (Reserve: ${this.reserveAmmo})`)
-    }
-    
-    
-     //Lägger till ammo (från ammo box)
-    addAmmo(amount) {
-        this.reserveAmmo += amount
-        console.log(`+${amount} ammo! Reserve: ${this.reserveAmmo}`)
-    }*/
 
     shoot(xDir,yDir) {
         const centerX = this.x + this.width / 2

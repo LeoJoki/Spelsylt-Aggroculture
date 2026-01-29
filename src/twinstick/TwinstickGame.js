@@ -96,27 +96,11 @@ export default class TwinstickGame extends GameBase {
         })
         this.score = 0
         this.plantSlots = []
+        this.seedHolding = null
         this.init()
         this.gameState = 'PLAYING'
         this.currentMenu = null
     }
-
-    /*
-    spriteConfig = {
-        imagePath: "../sum/sum"
-        width: 16
-        height: 16
-    }
-    
-    config = {
-        target: "player" or "enemy",
-        speed: 0.6,
-        width: 12,
-        height: 12,
-        maxShootRange: 800,
-        spriteConfig : spriteConfig
-    }
-    */
 
     addProjectile(x, y, directionX, directionY, config = {}) {
         // Skapa en ny projektil med Projectile-klassen
@@ -159,17 +143,7 @@ export default class TwinstickGame extends GameBase {
         let newPuddle = new AcidPuddle(this, x, y, width, height)
         this.puddles.push(newPuddle)
     }
-    /*
-    addEnemyProjectile(x, y, directionX, directionY, maxshootrange) {
-        // Skapa fiendens projektil
-        const projectile = new Projectile(this, x, y, directionX, directionY, maxshootrange)
-        projectile.speed = 0.3 // Mycket långsammare än spelarens projektiler
-        projectile.color = 'red'
-        projectile.width = 8
-        projectile.height = 8
-        this.enemyProjectiles.push(projectile)
-    }
-    */
+
     update(deltaTime) {
         this.music.play()
         // Uppdatera spel-logik varje frame
@@ -390,27 +364,6 @@ export default class TwinstickGame extends GameBase {
                             this.spawner.onEnemyKilled()
                             killedEnemies.push(enemy)
                         }
-                        
-                        // Spawna ammo pickups baserat på fiendens health med flying effekt
-                        /*const ammoCount = enemy.maxHealth
-                        const centerX = enemy.x + enemy.width / 2
-                        const centerY = enemy.y + enemy.height / 2
-                        
-                        for (let i = 0; i < ammoCount; i++) {
-                            const angle = Math.random() * Math.PI * 2
-                            const speed = 0.2 + Math.random() * 0.15
-                            const targetRadius = 15 + Math.random() * 20
-                            
-                            const pickup = new AmmoPickup(this, centerX, centerY - 20, {
-                                velocityX: Math.cos(angle) * speed,
-                                velocityY: -0.3 + Math.sin(angle) * speed * 0.3,
-                                gravity: 0.0008,
-                                isFlying: true,
-                                rotationSpeed: (Math.random() - 0.5) * 0.008
-                            })
-                            pickup.groundY = centerY + Math.sin(angle) * targetRadius
-                            this.ammoPickups.push(pickup)
-                        }*/
                     }
                 }
             })
@@ -467,42 +420,6 @@ export default class TwinstickGame extends GameBase {
         if (!hoveringPlant && this.hoveringPlantSlot) {
             this.hoveringPlantSlot = null
         }
-        // Kolla kollision mellan spelare och ammo pickups
-       /* this.ammoPickups.forEach(pickup => {
-            const pickupPrevX = pickup.x
-            const pickupPrevY = pickup.y
-            
-            // Uppdatera pickup physics
-            pickup.update(deltaTime)
-            
-            // Kolla kollision med väggar om pickupen flyger
-            if (pickup.isFlying) {
-                arenaData.walls.forEach(wall => {
-                    const collision = pickup.getCollisionData(wall)
-                    if (collision) {
-                        // Reflektera velocity baserat på kollisionsriktning
-                        if (collision.direction === 'left' || collision.direction === 'right') {
-                            pickup.x = pickupPrevX
-                            pickup.velocityX = -pickup.velocityX * 0.6 // Reflektera och dämpa
-                        }
-                        if (collision.direction === 'top' || collision.direction === 'bottom') {
-                            pickup.y = pickupPrevY
-                            pickup.velocityY = -pickup.velocityY * 0.6 // Reflektera och dämpa
-                        }
-                    }
-                })
-            }
-            
-            // Kolla kollision med spelare (kan plocka upp även när de flyger)
-            if (this.player.intersects(pickup)) {
-                this.player.addAmmo(pickup.ammoValue)
-                pickup.markedForDeletion = true
-            }
-        })
-        
-        // Ta bort uppplockade ammo pickups
-        this.ammoPickups = this.ammoPickups.filter(p => !p.markedForDeletion)*/
-
         this.camera.follow(this.player)
         this.camera.update(deltaTime)
     }
