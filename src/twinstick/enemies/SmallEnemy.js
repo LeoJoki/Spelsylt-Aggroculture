@@ -32,7 +32,7 @@ export default class SmallEnemy extends TwinstickEnemy {
         biteSound.preservesPitch = false
 
         super(game, x, y, 48, 48, {
-            moveSpeed: 0.25,       // Snabbare än normalt
+            moveSpeed: 0.22,       // Snabbare än normalt
             maxHealth: 3,          // Låg hälsa
             shootCooldownDuration: 1000,
             shootRange: 20,        // Kort räckvidd

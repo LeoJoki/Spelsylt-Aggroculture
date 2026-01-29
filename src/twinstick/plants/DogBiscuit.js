@@ -19,7 +19,7 @@ export default class DogBiscuit extends Plant {
 
     applyBuff() {
         if (!this.givingBuff) {
-            this.player.shootCooldownMultiplier += 0.15
+            this.player.shootCooldownMultiplier += 0.25
             this.player.projectileSize += 3.5
             this.givingBuff = true
         }
@@ -27,7 +27,7 @@ export default class DogBiscuit extends Plant {
 
     removeBuff() {
         if (this.givingBuff) {
-            this.player.shootCooldownMultiplier -= 0.15
+            this.player.shootCooldownMultiplier -= 0.25
             this.player.projectileSize -= 3.5
             this.givingBuff = false
         }

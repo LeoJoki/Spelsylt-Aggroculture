@@ -23,6 +23,7 @@ export default class TwinstickPlayer extends GameObject {
         this.directionY = 0
 
         this.speedMultiplier = 0
+        this.flipped = false
 
         // ===== DESIGN: Flag-based state system =====
         // isDashing, isReloading = mutually exclusive actions
@@ -275,20 +276,30 @@ export default class TwinstickPlayer extends GameObject {
             }
             else if (!this.committedAction){
                 //Shooting
-                this.firing = true
-                this.shoot()
-                if (this.shootCooldownMultiplier >= 0) {
-                    this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
-                }
-                else if (this.shootCooldownMultiplier < 0) {
-                    this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
-                }
+                
+                this.shootMouse()
             }
         }
         else if (!this.game.inputHandler.mouseButtons.has(0)) {
             this.firing = false
             this.committedAction = false
         }
+        if (this.shootCooldown <= 0) {
+            if (this.game.inputHandler.keys.has("ArrowRight")) {
+                this.shoot(1,0)
+            }
+            else if (this.game.inputHandler.keys.has("ArrowLeft")) {
+                this.shoot(-1,0)
+            }
+            else if (this.game.inputHandler.keys.has("ArrowUp")) {
+                this.shoot(0,-1)
+            }
+            else if (this.game.inputHandler.keys.has("ArrowDown")) {
+                this.shoot(0,1)
+            }
+        }
+        
+        
     }
     
     startDash() {
@@ -339,29 +350,28 @@ export default class TwinstickPlayer extends GameObject {
         this.reserveAmmo += amount
         console.log(`+${amount} ammo! Reserve: ${this.reserveAmmo}`)
     }*/
-    
-    shoot() {
-        // Beräkna riktning från spelarens center till muspekarens position
+
+    shoot(xDir,yDir) {
         const centerX = this.x + this.width / 2
         const centerY = this.y + this.height / 2
-        
-        // Använd camera.screenToWorld() för att konvertera koordinater
-        const mouseWorld = this.game.camera.screenToWorld(
-            this.game.inputHandler.mouseX,
-            this.game.inputHandler.mouseY
-        )
-        
-        const dx = mouseWorld.x - centerX
-        const dy = mouseWorld.y - centerY
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        
-        // Normalisera riktningen
-        const directionX = dx / distance
-        const directionY = dy / distance
 
+        if (xDir < 0) {
+            this.flipped = true
+        }
+        else {
+            this.flipped = false
+        }
 
+        this.firing = true
         let angleSpread = (this.spread)/(this.burst-1)
         const radPerDeg = 0.0174532925
+
+        if (this.shootCooldownMultiplier >= 0) {
+            this.startTimer('shootCooldown', this.shootCooldownDuration / (1 + this.shootCooldownMultiplier))
+        }
+        else if (this.shootCooldownMultiplier < 0) {
+            this.startTimer('shootCooldown', this.shootCooldownDuration * (1 - this.shootCooldownMultiplier))
+        }
 
         //ändrar playbackrate lite för att göra ljudet icke repetitivt
         this.shootSFX.currentTime = 0
@@ -378,8 +388,8 @@ export default class TwinstickPlayer extends GameObject {
                 angle = -this.spread/2 + angleSpread * i
             }
             
-            const angledDirX = directionX * Math.cos(radPerDeg*(angle)) - directionY * Math.sin(radPerDeg*(angle))
-            const angledDirY = directionX * Math.sin(radPerDeg*(angle)) + directionY * Math.cos(radPerDeg*(angle))
+            const angledDirX = xDir * Math.cos(radPerDeg*(angle)) - yDir * Math.sin(radPerDeg*(angle))
+            const angledDirY = xDir * Math.sin(radPerDeg*(angle)) + yDir * Math.cos(radPerDeg*(angle))
 
             let actualSpeed = this.projectileSpeed + this.projectileSpeed * 0.15 * Math.random()
 
@@ -405,6 +415,29 @@ export default class TwinstickPlayer extends GameObject {
         this.setAnimation("shoot")
     }
     
+    shootMouse() {
+        // Beräkna riktning från spelarens center till muspekarens position
+        const centerX = this.x + this.width / 2
+        const centerY = this.y + this.height / 2
+        
+        // Använd camera.screenToWorld() för att konvertera koordinater
+        const mouseWorld = this.game.camera.screenToWorld(
+            this.game.inputHandler.mouseX,
+            this.game.inputHandler.mouseY
+        )
+        
+        const dx = mouseWorld.x - centerX
+        const dy = mouseWorld.y - centerY
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        
+        // Normalisera riktningen
+        const directionX = dx / distance
+        const directionY = dy / distance
+
+        this.shoot(directionX,directionY)
+        
+    }
+    
     takeDamage(amount) {
         if (this.isInvulnerable) return
         
@@ -428,13 +461,17 @@ export default class TwinstickPlayer extends GameObject {
 
         const mouseX = this.game.inputHandler.mouseX
 
-        let flipped = false
 
-        if (mouseX < screenX) {
-            flipped = true
+        if (this.shootingAnim < 0) {
+            if (mouseX < screenX) {
+                this.flipped = true
+            }
+            else {
+                this.flipped = false
+            }
         }
 
-        const spriteDrawn = this.drawSprite(ctx, camera, flipped)
+        const spriteDrawn = this.drawSprite(ctx, camera, this.flipped)
         if (!spriteDrawn) {
             // Fallback: Rita spelaren som en rektangel
             ctx.fillStyle = this.color
