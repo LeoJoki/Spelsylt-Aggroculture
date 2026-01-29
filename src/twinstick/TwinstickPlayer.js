@@ -261,12 +261,13 @@ export default class TwinstickPlayer extends GameObject {
         if (!this.isDashing && this.game.inputHandler.mouseButtons.has(0) && this.shootCooldown <= 0) {
             //Planting
             if (this.game.hoveringPlantSlot && !this.firing && this.game.seedHolding) {
-                if (this.game.hoveringPlantSlot.state == "unplanted") {
-                    this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
-                    this.game.seedHolding = null
-                    this.game.ui.discardButton.visible = false
-                    this.committedAction = true
+                if (this.game.hoveringPlantSlot.plant) {
+                    this.game.hoveringPlantSlot.removePlant()
                 }
+                this.game.hoveringPlantSlot.plantSeed(this.game.seedHolding)
+                this.game.seedHolding = null
+                this.game.ui.discardButton.visible = false
+                this.committedAction = true
             }
             else if (this.game.uiButtonHovering && !this.firing) {
                 this.game.uiButtonHovering.activate()
