@@ -1,32 +1,36 @@
 import Plant from "../Plant"
 import PlantGrow from "../../assets/plants/plantGrow.png"
-import FullyGrown from "../../assets/plants/tomatoes.png"
+import FullyGrown from "../../assets/plants/pinkRose.png"
 
-export default class Tomatoes extends Plant {
+export default class PinkRose extends Plant {
     constructor(game) {
         let config = {
-            name : "Tomatoes",
-            rarity: "Common",
-            wavesTillGrown : 2,
+            name : "Pink Rose",
+            rarity: "Epic",
+            wavesTillGrown : 3,
             width: 32,
             height : 32,
             growingSprite : PlantGrow,
             grownSprite : FullyGrown,
-            description : "+1 damage, grows in 2 waves"
+            description : "+2 projectiles, -1 damage, grows in 3 waves"
         }
         super(game, config)
     }
 
     applyBuff() {
         if (!this.givingBuff) {
-            this.player.damage += 1
+            this.player.damage -= 1
+            this.player.burst += 2
+            this.player.spread += 10
             this.givingBuff = true
         }
     }
 
     removeBuff() {
         if (this.givingBuff) {
-            this.player.damage -= 1
+            this.player.damage += 1
+            this.player.burst -= 2
+            this.player.spread -= 10
             this.givingBuff = false
         }
     }

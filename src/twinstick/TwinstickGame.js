@@ -375,7 +375,13 @@ export default class TwinstickGame extends GameBase {
         this.projectiles.forEach(projectile => {
             this.enemies.forEach(enemy => {
                 if (projectile.intersects(enemy)) {
-                    let dead = enemy.takeDamage(this.player.damage)
+                    let damage = this.player.damage
+                    if (this.player.damage < 0.5) {
+                        damage = 0.5
+                    }
+
+                    let dead = enemy.takeDamage(damage)
+                    
                     projectile.markedForDeletion = true
 
                     if (dead && !killedEnemies.includes(enemy)) {

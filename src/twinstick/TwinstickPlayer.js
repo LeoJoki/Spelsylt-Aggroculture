@@ -381,9 +381,15 @@ export default class TwinstickPlayer extends GameObject {
             const angledDirX = directionX * Math.cos(radPerDeg*(angle)) - directionY * Math.sin(radPerDeg*(angle))
             const angledDirY = directionX * Math.sin(radPerDeg*(angle)) + directionY * Math.cos(radPerDeg*(angle))
 
+            let actualSpeed = this.projectileSpeed + this.projectileSpeed * 0.15 * Math.random()
+
+            if (actualSpeed < 0.1) {
+                actualSpeed = 0.1
+            }
+
             let projectileConfig = {
                 target:"enemy",
-                speed: this.projectileSpeed + this.projectileSpeed * 0.15 * Math.random(),
+                speed: actualSpeed,
                 width: this.projectileSize,
                 height: this.projectileSize,
                 maxShootRange : 1200,
