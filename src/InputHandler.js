@@ -12,6 +12,7 @@ export default class InputHandler {
         // Tangentbord
         window.addEventListener('keydown', (event) => {
             this.keys.add(event.key)
+            console.log(event.key)
             
             // Toggla debug-läge med 'p'
             if (event.key === 'p') {
