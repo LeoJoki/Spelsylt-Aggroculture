@@ -165,41 +165,7 @@ export default class EnemySpawner {
             this.game.onWaveComplete(this.currentWave)
         }
     }
-    
-    /**
-     * Spawnar ammo pickups som belöning efter wave
-     */
-    /*spawnWaveReward() {
-        const player = this.game.player
-        const ammoCount = 10
-        const centerX = player.x + player.width / 2
-        const centerY = player.y + player.height / 2
-        
-        // Spawna ammo med "explosion" effekt
-        for (let i = 0; i < ammoCount; i++) {
-            const angle = (i / ammoCount) * Math.PI * 2 + Math.random() * 0.3
-            const speed = 0.3 + Math.random() * 0.2 // 0.3-0.5 hastighet
-            
-            // Beräkna target position
-            const targetRadius = 60 + Math.random() * 20
-            const targetX = centerX + Math.cos(angle) * targetRadius
-            const targetY = centerY + Math.sin(angle) * targetRadius
-            
-            // Skapa pickup med physics
-            const pickup = new AmmoPickup(this.game, centerX, centerY - 30, {
-                velocityX: Math.cos(angle) * speed,
-                velocityY: -0.5 + Math.sin(angle) * speed * 0.5, // Flyg uppåt först
-                gravity: 0.0008,
-                isFlying: true,
-                rotationSpeed: (Math.random() - 0.5) * 0.01 // Rotera medan de flyger
-            })
-            pickup.groundY = targetY
-            this.game.ammoPickups.push(pickup)
-        }
-        
-        console.log('+10 ammo reward!')
-    }*/
-    
+
     /**
      * Uppdaterar spawner logik
      */

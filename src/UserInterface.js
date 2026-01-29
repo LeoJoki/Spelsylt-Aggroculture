@@ -389,7 +389,7 @@ export default class UserInterface {
         ctx.fillText(`Planting:`, this.game.width / 2, this.game.height - 330)
         ctx.font = '20px Arial'
         ctx.fillText(`WASD for movement`, this.game.width / 2, this.game.height - 420)
-        ctx.fillText(`Mouse to aim and Left Click to shoot`, this.game.width / 2, this.game.height - 395)
+        ctx.fillText(`Mouse to aim and Click or Hold Left Mouse Button to shoot`, this.game.width / 2, this.game.height - 395)
         ctx.fillText(`Space to dodge through bullets`, this.game.width / 2, this.game.height - 370)
         ctx.fillText(`After defeating a wave you get a seed!`, this.game.width / 2, this.game.height - 300)
         ctx.fillText(`Click on a dirt pile to plant the seed or click the trashcan to discard it.`, this.game.width / 2, this.game.height - 275)
