@@ -395,7 +395,7 @@ export default class UserInterface {
         ctx.fillText(`Click on a dirt pile to plant the seed or click the trashcan to discard it.`, this.game.width / 2, this.game.height - 275)
         ctx.fillText(`The plant will become fully grown after a number of waves.`, this.game.width / 2, this.game.height - 250)
         ctx.fillText(`Fully grown plants will make you stronger!`, this.game.width / 2, this.game.height - 225)
-        ctx.fillText(`Be careful though, Farmer John forgot his shovel in his barn so you can't replace plants.`, this.game.width / 2, this.game.height - 200)
+        ctx.fillText(`You can easily replace plants by planting over them or removing by pressing T, experiment with different combos!.`, this.game.width / 2, this.game.height - 200)
 
         ctx.font = '16px Arial'
         ctx.fillText(`Press ESC to go back`, this.game.width / 2, this.game.height - 175)
@@ -426,17 +426,21 @@ export default class UserInterface {
 
         this.discardButton.visible = true
 
-        ctx.fillText(`You got a ${this.game.seedHolding.name}` ,this.game.width/2,this.game.height - 80)
+        ctx.fillText(`You got a ${this.game.seedHolding.name}` ,this.game.width/2,this.game.height - 120)
 
         ctx.font = "20px Verdana"
-        ctx.fillStyle = '#b6b6b6'
+        ctx.fillStyle = '#e1e1e1'
 
-        ctx.fillText(`${this.game.seedHolding.rarity}` ,this.game.width/2,this.game.height - 50)
+        ctx.fillText(`${this.game.seedHolding.rarity}` ,this.game.width/2,this.game.height - 80)
 
         ctx.font = "18px Verdana"
 
 
-        ctx.fillText(`${this.game.seedHolding.description}` ,this.game.width/2,this.game.height - 20)
+        ctx.fillText(`${this.game.seedHolding.description}` ,this.game.width/2,this.game.height - 50)
+
+        ctx.font = "16px Verdana"
+
+        ctx.fillText("Plant by clicking a dirtpile in the field" ,this.game.width/2,this.game.height - 20)
 
         
 
