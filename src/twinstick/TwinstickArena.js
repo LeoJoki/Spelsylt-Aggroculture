@@ -181,16 +181,6 @@ export default class TwinstickArena {
             blockColor,
             barnConfig,
         ))
-        /*
-        // Block 2 - nedre höger kvadrant (diagonal)
-        this.walls.push(new Platform(
-            this.game,
-            (worldWidth * 2) / 3 - blockSize / 2,
-            (worldHeight * 2) / 3 - blockSize / 2,
-            blockSize,
-            blockSize,
-            blockColor
-        ))*/
     }
 
     update(deltaTime) {
@@ -218,10 +208,7 @@ export default class TwinstickArena {
                 screenY,
                 tile.width,
                 tile.height
-            )
-            
-            //ctx.fillStyle = tile.color
-            //ctx.fillRect(screenX, screenY, tile.width, tile.height)
+            )            
         })
         
 
